@@ -25,15 +25,29 @@
 
     <!-- Header -->
     <header class="bg-indigo-600 text-white shadow-md">
-        <div class="max-w-6xl mx-auto px-4 py-6 sm:px-6">
+        <div class="max-w-6xl mx-auto px-4 py-5 sm:px-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <!-- 左側：Logo 及標題 -->
             <div class="flex items-center space-x-3">
-                <div class="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                    <i class="fa-solid font-bold fa-graduation-cap text-3xl"></i>
+                <div class="bg-white p-2 rounded-xl shadow-inner flex items-center justify-center">
+                    <!-- 引用上傳的 SLC Logo -->
+                    <img src="SLC Logo (Blue+橫+中英).jpg" alt="博學堂 Logo" class="h-10 w-auto object-contain">
                 </div>
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-bold tracking-tight" id="headerTitle">博學堂新學年功輔留位登記</h1>
-                    <p class="text-indigo-100 text-sm mt-1" id="headerSubtitle">請為貴子弟預約來年上堂時間</p>
+                    <p class="text-indigo-100 text-xs mt-0.5" id="headerSubtitle">請為貴子弟預約來年上堂時間</p>
                 </div>
+            </div>
+
+            <!-- 右側：地址及電話聯絡資訊 -->
+            <div class="text-xs text-indigo-100 space-y-1 bg-indigo-700/50 p-3 rounded-xl border border-indigo-400/30 md:bg-transparent md:p-0 md:border-0 md:text-right">
+                <p class="flex items-center md:justify-end gap-1.5">
+                    <i class="fa-solid fa-location-dot text-indigo-300"></i>
+                    <span>地址：將軍澳毓雅里9號慧安商場1樓慧星滙S39號舖</span>
+                </p>
+                <p class="flex items-center md:justify-end gap-1.5">
+                    <i class="fa-solid fa-phone text-indigo-300"></i>
+                    <span>電話：2994 8882 / WhatsApp：6218 5506</span>
+                </p>
             </div>
         </div>
     </header>
