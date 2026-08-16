@@ -223,7 +223,7 @@
                 <div class="flex bg-slate-200/80 p-1 rounded-xl space-x-1">
                     <button type="button" id="tabWeeklyCalendarBtn" class="px-4 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-xs flex items-center space-x-1.5 cursor-pointer">
                         <i class="fa-solid fa-calendar-week"></i>
-                        <span>🗓️ 週曆總覽表 (Weekly Calendar)</span>
+                        <span>🗓️ 日曆總覽表</span>
                     </button>
                     <button type="button" id="tabTableBtn" class="px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900 flex items-center space-x-1.5 cursor-pointer">
                         <i class="fa-solid fa-table-list"></i>
@@ -241,50 +241,55 @@
             </div>
 
             <div id="weeklyCalendarTabContent" class="space-y-3">
-                <!-- 網頁與列印圖例說明列 -->
+                <!-- 控制列 -->
                 <div class="bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-xs flex flex-wrap items-center justify-between gap-3 text-slate-600 legend-print-box">
                     <div class="flex flex-wrap items-center gap-3">
-                        <span class="font-bold text-slate-800">課堂進度 Emoji 說明：</span>
-                        <span class="bg-white px-2 py-0.5 rounded border border-slate-200"><strong class="text-emerald-600">🎒 剛到</strong>：當刻開始上課</span>
-                        <span class="bg-white px-2 py-0.5 rounded border border-slate-200"><strong class="text-slate-600">📖 續堂</strong>：課堂進行中</span>
-                        <span class="bg-white px-2 py-0.5 rounded border border-slate-200"><strong class="text-amber-600">👋 完堂</strong>：最後30分鐘 (準備離座)</span>
-                    </div>
-
-                    <!-- 列印當天選擇器 -->
-                    <div class="flex items-center gap-2 bg-white p-1 rounded-lg border border-slate-300 shadow-xs no-print">
-                        <span class="font-semibold text-slate-700">列印指定日期：</span>
-                        <select id="printDaySelect" class="px-2 py-1 bg-slate-50 border border-slate-200 rounded font-medium">
+                        <span class="font-bold text-slate-800">檢視與列印星期：</span>
+                        <select id="viewDaySelect" class="px-3 py-1 bg-white border border-slate-300 rounded font-bold text-indigo-700 shadow-xs">
                             <option value="mon">星期一</option>
                             <option value="tue">星期二</option>
                             <option value="wed">星期三</option>
                             <option value="thu">星期四</option>
                             <option value="fri">星期五</option>
                         </select>
-                        <button type="button" id="printDayBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-md font-bold transition flex items-center gap-1 cursor-pointer">
+                    </div>
+
+                    <!-- 列印按鈕 -->
+                    <div class="flex items-center gap-2 no-print">
+                        <button type="button" id="printDayBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                             <i class="fa-solid fa-print"></i>
-                            <span>列印當天時間表</span>
+                            <span>列印當天時間表 (A4 橫向單頁)</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- CSS 列印控制：單頁 Fit 排版 -->
+                <!-- CSS 橫向 A4 單頁 Fit 排版控制 -->
                 <style>
                 @media print {
                   @page { 
-                    size: A4 portrait; 
-                    margin: 8mm; 
+                    size: A4 landscape; 
+                    margin: 5mm; 
                   }
                   body { 
                     background: white !important; 
                     padding: 0 !important; 
                     color: black !important; 
-                    font-size: 11px !important;
+                    font-size: 10px !important;
                   }
                   nav, header, .no-print, #parentViewSection, .flex.bg-slate-200\/80, #calendarFilterBox, button { 
                     display: none !important; 
                   }
                   #adminViewSection, #weeklyCalendarTabContent { 
                     display: block !important; 
+                  }
+
+                  .print-header-title {
+                    display: block !important;
+                    font-size: 16px !important;
+                    font-weight: bold !important;
+                    text-align: center !important;
+                    margin-bottom: 6px !important;
+                    color: #0f172a !important;
                   }
 
                   table { 
@@ -294,55 +299,50 @@
                     page-break-inside: avoid !important;
                   }
 
-                  table th:first-child,
-                  table td:first-child { 
-                    width: 65px !important; 
-                    text-align: center !important;
-                    font-weight: bold !important;
-                    white-space: nowrap !important;
-                  }
-
-                  table th:not(:first-child),
-                  table td:not(:first-child) { 
-                    width: auto !important; 
-                    padding: 4px 6px !important;
-                  }
-
                   th, td { 
                     border: 1px solid #475569 !important; 
-                    font-size: 10px !important; 
-                    vertical-align: top !important;
+                    padding: 3px 4px !important; 
+                    vertical-align: middle !important;
                   }
 
-                  body.print-mon table th:nth-child(n+3), body.print-mon table td:nth-child(n+3) { display: none !important; }
-                  body.print-tue table th:not(:nth-child(1)):not(:nth-child(3)), body.print-tue table td:not(:nth-child(1)):not(:nth-child(3)) { display: none !important; }
-                  body.print-wed table th:not(:nth-child(1)):not(:nth-child(4)), body.print-wed table td:not(:nth-child(1)):not(:nth-child(4)) { display: none !important; }
-                  body.print-thu table th:not(:nth-child(1)):not(:nth-child(5)), body.print-thu table td:not(:nth-child(1)):not(:nth-child(5)) { display: none !important; }
-                  body.print-fri table th:not(:nth-child(1)):not(:nth-child(6)), body.print-fri table td:not(:nth-child(1)):not(:nth-child(6)) { display: none !important; }
+                  th {
+                    background-color: #f1f5f9 !important;
+                    font-size: 10px !important;
+                  }
+
+                  .student-badge {
+                    font-size: 9px !important;
+                    padding: 1px 4px !important;
+                    margin: 1px !important;
+                    border: 1px solid #94a3b8 !important;
+                    background-color: #f8fafc !important;
+                  }
                 }
+
+                .print-header-title { display: none; }
                 </style>
 
+                <div class="print-header-title" id="printHeaderTitle">博學堂功輔班每日課堂時間表</div>
+
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden overflow-x-auto">
-                    <table class="w-full border-collapse">
+                    <table class="w-full border-collapse text-xs">
                         <colgroup>
-                            <col style="width: 70px;">
-                            <col style="width: 19.6%;">
-                            <col style="width: 19.6%;">
-                            <col style="width: 19.6%;">
-                            <col style="width: 19.6%;">
-                            <col style="width: 19.6%;">
+                            <col style="width: 10%;"> <!-- 時間 -->
+                            <col style="width: 10%;"> <!-- 人數總計 -->
+                            <col style="width: 26%;"> <!-- 🎒 剛到 -->
+                            <col style="width: 27%;"> <!-- 📖 續堂 -->
+                            <col style="width: 27%;"> <!-- 👋 完堂 -->
                         </colgroup>
                         <thead>
-                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200 text-xs">
-                                <th class="p-2 border-r border-slate-200 text-center">時間</th>
-                                <th class="p-2 border-r border-slate-200 text-center">星期一</th>
-                                <th class="p-2 border-r border-slate-200 text-center">星期二</th>
-                                <th class="p-2 border-r border-slate-200 text-center">星期三</th>
-                                <th class="p-2 border-r border-slate-200 text-center">星期四</th>
-                                <th class="p-2 text-center">星期五</th>
+                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                <th class="p-2 border-r border-slate-200 text-center font-bold">時段</th>
+                                <th class="p-2 border-r border-slate-200 text-center font-bold">在座人數</th>
+                                <th class="p-2 border-r border-slate-200 text-center font-bold text-emerald-700 bg-emerald-50/50">🎒 剛到上課</th>
+                                <th class="p-2 border-r border-slate-200 text-center font-bold text-indigo-700 bg-indigo-50/50">📖 課堂進行中</th>
+                                <th class="p-2 text-center font-bold text-amber-700 bg-amber-50/50">👋 準備離座</th>
                             </tr>
                         </thead>
-                        <tbody id="weeklyCalendarGridBody" class="divide-y divide-slate-200 text-xs"></tbody>
+                        <tbody id="weeklyCalendarGridBody" class="divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
             </div>
@@ -502,6 +502,7 @@
             const tableTabContent = document.getElementById('tableTabContent');
             const calendarGradeFilter = document.getElementById('calendarGradeFilter');
             const weeklyCalendarGridBody = document.getElementById('weeklyCalendarGridBody');
+            const viewDaySelect = document.getElementById('viewDaySelect');
 
             const adminSearchInput = document.getElementById('adminSearchInput');
             const timeFilterDropdownBtn = document.getElementById('timeFilterDropdownBtn');
@@ -804,6 +805,7 @@
             });
 
             calendarGradeFilter.addEventListener('change', refreshAdminDashboard);
+            viewDaySelect.addEventListener('change', renderWeeklyCalendarMatrix);
 
             function refreshAdminDashboard() {
                 const pendingCount = studentRecords.filter(r => r.status === 'Pending').length;
@@ -817,8 +819,11 @@
                 renderAdminTable();
             }
 
+            // 方案 B：單日狀態三分欄渲染算法
             function renderWeeklyCalendarMatrix() {
                 const filterGrade = calendarGradeFilter.value;
+                const selectedDayId = viewDaySelect.value;
+
                 const filteredRecords = studentRecords.filter(r => {
                     if (filterGrade === 'primary') return r.targetGrade.includes('小');
                     if (filterGrade === 'secondary') return r.targetGrade.includes('中');
@@ -836,73 +841,46 @@
                     const slotStart = timeToMin(time);
                     const slotEnd = slotStart + 30;
 
-                    rowsHtml += `<tr class="hover:bg-slate-50/80 transition">`;
-                    rowsHtml += `<td class="p-1 font-bold text-slate-700 bg-slate-100/70 border-r border-slate-200 text-center font-mono text-[11px]">${time}</td>`;
+                    let startingList = [];
+                    let ongoingList = [];
+                    let endingList = [];
 
-                    days.forEach(day => {
-                        let cellStudents = [];
+                    filteredRecords.forEach(st => {
+                        const sched = parseScheduleObj(st.schedule);
+                        const rangeStr = sched[selectedDayId];
+                        if (!rangeStr) return;
 
-                        filteredRecords.forEach(st => {
-                            const sched = parseScheduleObj(st.schedule);
-                            const rangeStr = sched[day.id];
-                            if (!rangeStr) return;
+                        const times = rangeStr.split('-');
+                        const stMin = timeToMin(times[0]);
+                        const etMin = timeToMin(times[1]);
 
-                            const times = rangeStr.split('-');
-                            const stMin = timeToMin(times[0]);
-                            const etMin = timeToMin(times[1]);
-
-                            if (slotStart < etMin && slotEnd > stMin) {
-                                let statusEmoji = '📖';
-                                let sortPriority = 2;
-
-                                if (slotStart === stMin) {
-                                    statusEmoji = '🎒';
-                                    sortPriority = 1;
-                                } else if (slotEnd === etMin) {
-                                    statusEmoji = '👋';
-                                    sortPriority = 3;
-                                }
-
-                                cellStudents.push({
-                                    studentName: st.studentName,
-                                    rangeStr: rangeStr,
-                                    statusEmoji: statusEmoji,
-                                    sortPriority: sortPriority
-                                });
+                        if (slotStart < etMin && slotEnd > stMin) {
+                            if (slotStart === stMin) {
+                                startingList.push(st.studentName);
+                            } else if (slotEnd === etMin) {
+                                endingList.push(st.studentName);
+                            } else {
+                                ongoingList.push(st.studentName);
                             }
-                        });
-
-                        cellStudents.sort((a, b) => a.sortPriority - b.sortPriority);
-
-                        const totalCount = cellStudents.length;
-                        const startingCount = cellStudents.filter(s => s.statusEmoji === '🎒').length;
-                        const ongoingCount = cellStudents.filter(s => s.statusEmoji === '📖').length;
-                        const endingCount = cellStudents.filter(s => s.statusEmoji === '👋').length;
-
-                        rowsHtml += `<td class="p-1 border-r border-slate-200 align-top">`;
-                        if (totalCount === 0) {
-                            rowsHtml += `<div class="text-center text-slate-300 text-[10px] py-0.5">-</div>`;
-                        } else {
-                            rowsHtml += `
-                                <div class="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded px-1 py-0.5 mb-1 text-center flex items-center justify-between">
-                                    <span>👥 在座: ${totalCount}人</span>
-                                    <span class="font-normal text-[9px] text-slate-500">🎒${startingCount} 📖${ongoingCount} 👋${endingCount}</span>
-                                </div>
-                            `;
-
-                            cellStudents.forEach(item => {
-                                rowsHtml += `
-                                    <div class="flex items-center justify-between text-xs py-0.5 px-1.5 mb-1 bg-slate-50 rounded border border-slate-200">
-                                        <span class="font-bold text-slate-800">${item.studentName}</span>
-                                        <span class="text-[10px] text-slate-500 font-mono ml-1">${item.statusEmoji} ${item.rangeStr}</span>
-                                    </div>
-                                `;
-                            });
                         }
-                        rowsHtml += `</td>`;
                     });
+
+                    const totalCount = startingList.length + ongoingList.length + endingList.length;
+
+                    const renderBadges = (list, colorClass) => {
+                        if (list.length === 0) return '<span class="text-slate-300">-</span>';
+                        return list.map(name => `<span class="inline-block student-badge font-bold rounded px-1.5 py-0.5 ${colorClass}">${name}</span>`).join(' ');
+                    };
+
+                    rowsHtml += `<tr class="hover:bg-slate-50 transition">`;
+                    rowsHtml += `<td class="p-1 font-bold text-slate-700 bg-slate-100/80 border-r border-slate-200 text-center font-mono text-xs">${time}</td>`;
+                    rowsHtml += `<td class="p-1 border-r border-slate-200 text-center font-bold text-indigo-700 bg-indigo-50/20">${totalCount > 0 ? `👥 ${totalCount}人` : '-'}</td>`;
+                    rowsHtml += `<td class="p-1 border-r border-slate-200 text-left align-middle">${renderBadges(startingList, 'bg-emerald-50 text-emerald-800 border-emerald-200')}</td>`;
+                    rowsHtml += `<td class="p-1 border-r border-slate-200 text-left align-middle">${renderBadges(ongoingList, 'bg-slate-100 text-slate-800 border-slate-300')}</td>`;
+                    rowsHtml += `<td class="p-1 text-left align-middle">${renderBadges(endingList, 'bg-amber-50 text-amber-800 border-amber-200')}</td>`;
                     rowsHtml += `</tr>`;
                 });
+
                 weeklyCalendarGridBody.innerHTML = rowsHtml;
             }
 
@@ -1150,15 +1128,18 @@
                 }
             };
 
+            // 列印觸發邏輯
             const printDayBtn = document.getElementById('printDayBtn');
-            const printDaySelect = document.getElementById('printDaySelect');
 
             if (printDayBtn) {
                 printDayBtn.addEventListener('click', function () {
-                    const selectedDay = printDaySelect.value;
+                    const selectedDayId = viewDaySelect.value;
+                    const dayNames = { mon: '星期一', tue: '星期二', wed: '星期三', thu: '星期四', fri: '星期五' };
                     
-                    document.body.classList.remove('print-mon', 'print-tue', 'print-wed', 'print-thu', 'print-fri');
-                    document.body.classList.add(`print-${selectedDay}`);
+                    const printTitle = document.getElementById('printHeaderTitle');
+                    if (printTitle) {
+                        printTitle.textContent = `博學堂功輔班每日課堂時間表 - ${dayNames[selectedDayId]}`;
+                    }
 
                     window.print();
                 });
