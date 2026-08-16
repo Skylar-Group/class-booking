@@ -90,7 +90,7 @@
                             </select>
                         </div>
 
-                        <!-- Parent Phone (NEW) -->
+                        <!-- Parent Phone -->
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1" for="parentPhone">
                                 家長 WhatsApp 電話 <span class="text-red-500">*</span>
@@ -275,7 +275,7 @@
         </div>
     </main>
 
-    <!-- Modals -->
+    <!-- Parent Confirm Modal -->
     <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 flex flex-col max-h-[90vh]">
             <h3 class="text-xl font-bold text-slate-800 text-center mb-4">登記確認預覽</h3>
@@ -287,7 +287,7 @@
         </div>
     </div>
 
-    <!-- Admin Edit Modal (NEW) -->
+    <!-- Admin Edit Modal -->
     <div id="adminEditModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
             <h3 class="text-lg font-bold text-slate-800 mb-2">管理員調動課堂時間</h3>
@@ -322,6 +322,7 @@
         </div>
     </div>
 
+    <!-- Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjtvZ7SWCAf8_GrF4Mg6SiyS06PxzSLg2QhouOHFWP5EkzDsctz1xef8HGC4hHXbnP_g/exec";
@@ -711,7 +712,6 @@
                 }).join('');
             }
 
-            // 開啟調動審批 Modal
             window.openEditModal = function(id) {
                 editingRecordId = id;
                 const record = studentRecords.find(r => r.id === id);
@@ -742,7 +742,6 @@
 
             closeEditModalBtn.addEventListener('click', () => adminEditModal.classList.add('hidden'));
 
-            // 儲存審批調動
             saveEditBtn.addEventListener('click', () => {
                 const record = studentRecords.find(r => r.id === editingRecordId);
                 if (!record) return;
@@ -765,7 +764,6 @@
                 alert(`已成功調動並核准 ${record.studentName} 的課堂時間！`);
             });
 
-            // 發送 WhatsApp 通知
             window.sendWhatsapp = function(id) {
                 const record = studentRecords.find(r => r.id === id);
                 if (!record || !record.parentPhone) {
