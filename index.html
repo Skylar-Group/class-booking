@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博學堂新學年功輔留位登記 V1.9-SyncDelete</title>
+    <title>博學堂新學年功輔留位登記 V2.0-DirectUpdate</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -15,7 +15,7 @@
     <!-- Top Navigation -->
     <nav class="bg-indigo-900 text-white text-xs py-2 px-4 shadow-inner">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V1.9-SyncDelete</strong></span>
+            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V2.0-DirectUpdate</strong></span>
             <button type="button" id="navAdminBtn" class="bg-indigo-700 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition flex items-center space-x-1 cursor-pointer">
                 <i class="fa-solid fa-user-shield"></i>
                 <span id="navAdminBtnText">管理員登入</span>
@@ -927,6 +927,7 @@
 
             closeEditModalBtn.addEventListener('click', () => adminEditModal.classList.add('hidden'));
 
+            // 核心修改：確認調動並核准時直接覆蓋原資料，並實時更新前端變數與畫面
             saveEditBtn.addEventListener('click', () => {
                 const record = studentRecords.find(r => String(r.id) === String(editingRecordId));
                 if (!record) return;
@@ -945,7 +946,7 @@
                 record.status = 'Approved';
 
                 saveEditBtn.disabled = true;
-                saveEditBtn.textContent = "儲存中...";
+                saveEditBtn.textContent = "覆蓋儲存中...";
 
                 if (SCRIPT_URL) {
                     fetch(SCRIPT_URL, {
@@ -955,13 +956,14 @@
                         saveEditBtn.disabled = false;
                         saveEditBtn.textContent = "確認調動並核准";
                         adminEditModal.classList.add('hidden');
+                        // 重新從試算表加載最新資料並即時渲染
                         loadRecordsFromSheet();
-                        alert(`已成功調動並核准 ${record.studentName} 的課堂時間，資料已同步至 Google Sheets！`);
+                        alert(`已成功更新 ${record.studentName} 的資料至 Google Sheets！`);
                     }).catch(err => {
                         saveEditBtn.disabled = false;
                         saveEditBtn.textContent = "確認調動並核准";
-                        console.error("同步失敗:", err);
-                        alert("儲存至 Google Sheets 時出錯，請再試一次。");
+                        console.error("覆蓋儲存失敗:", err);
+                        alert("儲存至 Google Sheets 時出錯，請重試。");
                     });
                 } else {
                     saveEditBtn.disabled = false;
@@ -971,6 +973,7 @@
                 }
             });
 
+            // 核心修改：精準對應調動後的最新 schedule 物件生成 WhatsApp 訊息
             window.sendWhatsapp = function(id) {
                 const record = studentRecords.find(r => String(r.id) === String(id));
                 if (!record || !record.parentPhone) {
@@ -1001,37 +1004,31 @@
 
             adminSearchInput.addEventListener('keyup', renderAdminTable);
 
-            // 實時同步刪除至 Google Sheets
-window.deleteRecord = function(id) {
-    const record = studentRecords.find(r => String(r.id) === String(id));
-    const name = record ? record.studentName : '';
-    
-    if (confirm(`確定要刪除 ${name} 的留位記錄嗎？此操作將同時從 Google Sheets 刪除！`)) {
-        if (SCRIPT_URL) {
-            // 使用 FormData 格式繞過 Apps Script 的 CORS 限制
-            const formData = new FormData();
-            formData.append("data", JSON.stringify({ action: 'delete', id: id }));
+            // 核心修改：精準對應 ID 從 Google Sheets 刪除整列
+            window.deleteRecord = function(id) {
+                const record = studentRecords.find(r => String(r.id) === String(id));
+                const name = record ? record.studentName : '';
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'delete', id: id })
-            }).then(() => {
-                // 立即更新前端畫面並重新讀取資料
-                studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
-                refreshAdminDashboard();
-                loadRecordsFromSheet();
-            }).catch(err => {
-                console.error("刪除失敗:", err);
-                // 即使網絡延遲，前端先預先移除該列
-                studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
-                refreshAdminDashboard();
-            });
-        } else {
-            studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
-            refreshAdminDashboard();
-        }
-    }
-};
+                if (confirm(`確定要刪除 ${name} 的留位記錄嗎？此操作將同時從 Google Sheets 刪除！`)) {
+                    if (SCRIPT_URL) {
+                        fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ action: 'delete', id: id })
+                        }).then(() => {
+                            studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
+                            refreshAdminDashboard();
+                            loadRecordsFromSheet();
+                        }).catch(err => {
+                            console.error("刪除失敗:", err);
+                            studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
+                            refreshAdminDashboard();
+                        });
+                    } else {
+                        studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
+                        refreshAdminDashboard();
+                    }
+                }
+            };
 
             renderDays();
             updateCalculations();
