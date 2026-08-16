@@ -737,7 +737,7 @@
                 renderAdminTable();
             }
 
-            function renderWeeklyCalendarMatrix() {
+           function renderWeeklyCalendarMatrix() {
                 const filterGrade = calendarGradeFilter.value;
                 const filteredRecords = studentRecords.filter(r => {
                     if (filterGrade === 'primary') return r.targetGrade.includes('小');
@@ -745,47 +745,94 @@
                     return true;
                 });
 
+                // 時間轉分鐘輔助函數
+                function timeToMin(tStr) {
+                    if (!tStr) return 0;
+                    const parts = tStr.split(':').map(Number);
+                    return parts[0] * 60 + parts[1];
+                }
+
                 let rowsHtml = '';
                 startTimes.forEach(time => {
+                    const slotStart = timeToMin(time);
+                    const slotEnd = slotStart + 30; // 每個格域為 30 分鐘
+
                     rowsHtml += `<tr class="hover:bg-slate-50/80 transition">`;
-                    rowsHtml += `<td class="p-3 font-bold text-slate-700 bg-slate-100/70 border-r border-slate-200 text-center font-mono">${time}</td>`;
+                    
+                    // 計算當前全周此時段的最高人數或呈現，先建立基本時段 Header
+                    let dayCellsHtml = '';
+
                     days.forEach(day => {
+                        // 篩選出在當前 30 分鐘時段「在座」的學生
                         const cellStudents = filteredRecords.filter(r => {
                             const sched = parseScheduleObj(r.schedule);
-                            return sched[day.id] && sched[day.id].startsWith(time);
+                            const rangeStr = sched[day.id];
+                            if (!rangeStr) return false;
+
+                            const times = rangeStr.split('-');
+                            const stMin = timeToMin(times[0]);
+                            const etMin = timeToMin(times[1]);
+
+                            // 判斷時間重疊：時段開始 < 學生完堂 且 時段結束 > 學生開始
+                            return slotStart < etMin && slotEnd > stMin;
                         });
 
-                        rowsHtml += `<td class="p-2 border-r border-slate-200 align-top">`;
+                        dayCellsHtml += `<td class="p-2 border-r border-slate-200 align-top">`;
+                        
                         if (cellStudents.length === 0) {
-                            rowsHtml += `<div class="text-center text-slate-300 text-xs py-1">-</div>`;
+                            dayCellsHtml += `<div class="text-center text-slate-300 text-xs py-1">-</div>`;
                         } else {
                             cellStudents.forEach(st => {
                                 const isPrimary = st.targetGrade.includes('小');
                                 const isApproved = st.status === 'Approved';
                                 const sched = parseScheduleObj(st.schedule);
+                                const rangeStr = sched[day.id];
+                                const times = rangeStr.split('-');
+                                const stMin = timeToMin(times[0]);
+                                const etMin = timeToMin(times[1]);
 
-                                const bgStyle = isPrimary ? 'bg-sky-100 text-sky-900' : 'bg-purple-100 text-purple-900';
+                                // 判斷當刻狀態 Emoji
+                                let statusEmoji = '';
+                                if (slotStart === stMin) {
+                                    statusEmoji = `<span class="bg-emerald-100 text-emerald-800 font-bold px-1 py-0.5 rounded mr-1">🎒 剛到</span>`;
+                                } else if (slotEnd === etMin) {
+                                    statusEmoji = `<span class="bg-amber-100 text-amber-800 font-bold px-1 py-0.5 rounded mr-1">👋 完堂</span>`;
+                                } else {
+                                    statusEmoji = `<span class="bg-slate-100 text-slate-600 font-medium px-1 py-0.5 rounded mr-1">📖 續堂</span>`;
+                                }
+
+                                const bgStyle = isPrimary ? 'bg-sky-50 text-sky-900 border-sky-200' : 'bg-purple-50 text-purple-900 border-purple-200';
                                 const borderStyle = isApproved ? 'border-2 border-emerald-500 shadow-2xs' : 'border border-amber-400 border-dashed';
 
                                 const statusTag = isApproved 
                                     ? `<span class="text-[10px] bg-emerald-600 text-white font-bold px-1 rounded ml-1">已確認</span>` 
                                     : `<span class="text-[10px] bg-amber-500 text-white font-bold px-1 rounded ml-1">待審批</span>`;
 
-                                rowsHtml += `
-                                    <div class="p-1.5 rounded text-xs mb-1.5 ${bgStyle} ${borderStyle}">
-                                        <div class="flex items-center justify-between">
+                                dayCellsHtml += `
+                                    <div class="p-1.5 rounded text-xs mb-1.5 border ${bgStyle} ${borderStyle}">
+                                        <div class="flex items-center justify-between mb-1">
                                             <strong>${st.studentName}</strong>
                                             ${statusTag}
                                         </div>
-                                        <div class="text-[10px] opacity-80 mt-0.5 font-mono">${st.targetGrade} | ${sched[day.id]}</div>
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            ${statusEmoji}
+                                            <span class="opacity-75 font-mono">${st.targetGrade} | ${rangeStr}</span>
+                                        </div>
                                     </div>
                                 `;
                             });
                         }
-                        rowsHtml += `</td>`;
+                        dayCellsHtml += `</td>`;
                     });
+
+                    // 組合左側時段 Header 與在座統計
+                    rowsHtml += `<td class="p-2 font-bold text-slate-700 bg-slate-100/70 border-r border-slate-200 text-center font-mono">
+                        <div>${time}</div>
+                    </td>`;
+                    rowsHtml += dayCellsHtml;
                     rowsHtml += `</tr>`;
                 });
+
                 weeklyCalendarGridBody.innerHTML = rowsHtml;
             }
 
