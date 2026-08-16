@@ -210,7 +210,6 @@
                         <span>📋 學生數據清單</span>
                     </button>
                 </div>
-                <!-- 全局年級篩選選單 (適用於週曆與數據清單) -->
                 <div id="calendarFilterBox" class="flex items-center space-x-2 text-xs">
                     <span class="text-slate-500 font-medium">篩選年級:</span>
                     <select id="calendarGradeFilter" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-medium text-slate-700">
@@ -312,6 +311,8 @@
     <!-- Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjtvZ7SWCAf8_GrF4Mg6SiyS06PxzSLg2QhouOHFWP5EkzDsctz1xef8HGC4hHXbnP_g/exec";
+
             const days = [
                 { id: 'mon', name: '星期一' },
                 { id: 'tue', name: '星期二' },
@@ -322,10 +323,7 @@
             const startTimes = ["16:00", "16:30", "17:00", "17:30", "18:00"];
 
             let isAdminLoggedIn = false;
-            let studentRecords = [
-                { id: 1, studentName: '陳大文', targetGrade: '升小四', daysPerWeek: 3, duration: 1.5, schedule: { mon: '16:00-17:30', wed: '16:30-18:00', fri: '16:00-17:30' }, remarks: '加強英文', submittedAt: '2026-08-01 14:20' },
-                { id: 2, studentName: '李小玲', targetGrade: '升中一', daysPerWeek: 4, duration: 2.0, schedule: { mon: '17:00-19:00', tue: '17:00-19:00', thu: '17:00-19:00', fri: '17:00-19:00' }, remarks: '無', submittedAt: '2026-08-02 10:15' }
-            ];
+            let studentRecords = [];
             let tempSubmissionData = null;
 
             const parentViewSection = document.getElementById('parentViewSection');
@@ -359,6 +357,17 @@
 
             const adminSearchInput = document.getElementById('adminSearchInput');
             const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+            function loadRecordsFromSheet() {
+                if (!SCRIPT_URL) return;
+                fetch(SCRIPT_URL)
+                    .then(res => res.json())
+                    .then(data => {
+                        studentRecords = data;
+                        refreshAdminDashboard();
+                    })
+                    .catch(err => console.error("無法讀取 Google Sheets 資料:", err));
+            }
 
             function renderDays() {
                 const defaultRequiredDays = parseInt(daysPerWeekSelect.value);
@@ -515,14 +524,23 @@
             });
 
             closeModalBtn.addEventListener('click', () => confirmModal.classList.add('hidden'));
+
             finalSubmitBtn.addEventListener('click', () => {
                 if (tempSubmissionData) {
-                    studentRecords.push(tempSubmissionData);
-                    refreshAdminDashboard();
+                    if (SCRIPT_URL) {
+                        fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify(tempSubmissionData)
+                        }).then(() => loadRecordsFromSheet());
+                    } else {
+                        studentRecords.push(tempSubmissionData);
+                        refreshAdminDashboard();
+                    }
                 }
                 confirmModal.classList.add('hidden');
                 successModal.classList.remove('hidden');
             });
+
             resetFormBtn.addEventListener('click', () => {
                 registrationForm.reset();
                 successModal.classList.add('hidden');
@@ -530,7 +548,6 @@
                 updateCalculations();
             });
 
-            // Admin Logic
             navAdminBtn.addEventListener('click', function () {
                 if (!isAdminLoggedIn) {
                     adminAuthModal.classList.remove('hidden');
@@ -552,6 +569,7 @@
                     headerTitle.textContent = "博學堂功輔留位系統 - 管理員後台";
                     parentViewSection.classList.add('hidden');
                     adminViewSection.classList.remove('hidden');
+                    loadRecordsFromSheet();
                     refreshAdminDashboard();
                 } else {
                     alert('密碼不正確！');
@@ -571,7 +589,6 @@
                 weeklyCalendarTabContent.classList.add('hidden');
             });
 
-            // 年級篩選選單事件連動 (同時更新週曆與表格)
             calendarGradeFilter.addEventListener('change', refreshAdminDashboard);
 
             function refreshAdminDashboard() {
@@ -667,6 +684,7 @@
 
             renderDays();
             updateCalculations();
+            loadRecordsFromSheet();
         });
     </script>
 </body>
