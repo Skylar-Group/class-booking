@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博學堂新學年功輔留位登記 V2.0-DirectUpdate</title>
+    <title>博學堂新學年功輔留位登記 V2.1-FixDelete</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -15,7 +15,7 @@
     <!-- Top Navigation -->
     <nav class="bg-indigo-900 text-white text-xs py-2 px-4 shadow-inner">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V2.0-DirectUpdate</strong></span>
+            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V2.1-FixDelete</strong></span>
             <button type="button" id="navAdminBtn" class="bg-indigo-700 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition flex items-center space-x-1 cursor-pointer">
                 <i class="fa-solid fa-user-shield"></i>
                 <span id="navAdminBtnText">管理員登入</span>
@@ -881,13 +881,13 @@
                             <td class="p-3.5 max-w-xs">${scheduleBadges}</td>
                             <td class="p-3.5 text-slate-500 text-xs">${r.remarks}</td>
                             <td class="p-3.5 text-center space-x-1">
-                                <button type="button" onclick="openEditModal(${r.id})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded text-xs font-semibold cursor-pointer">
+                                <button type="button" onclick="openEditModal('${r.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded text-xs font-semibold cursor-pointer">
                                     調動 / 審批
                                 </button>
-                                <button type="button" onclick="sendWhatsapp(${r.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-xs font-semibold cursor-pointer">
+                                <button type="button" onclick="sendWhatsapp('${r.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-xs font-semibold cursor-pointer">
                                     <i class="fa-brands fa-whatsapp"></i> 通知
                                 </button>
-                                <button type="button" onclick="deleteRecord(${r.id})" class="text-red-500 hover:text-red-700 p-1 cursor-pointer">
+                                <button type="button" onclick="deleteRecord('${r.id}')" class="text-red-500 hover:text-red-700 p-1 cursor-pointer">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </td>
@@ -927,7 +927,6 @@
 
             closeEditModalBtn.addEventListener('click', () => adminEditModal.classList.add('hidden'));
 
-            // 核心修改：確認調動並核准時直接覆蓋原資料，並實時更新前端變數與畫面
             saveEditBtn.addEventListener('click', () => {
                 const record = studentRecords.find(r => String(r.id) === String(editingRecordId));
                 if (!record) return;
@@ -956,7 +955,6 @@
                         saveEditBtn.disabled = false;
                         saveEditBtn.textContent = "確認調動並核准";
                         adminEditModal.classList.add('hidden');
-                        // 重新從試算表加載最新資料並即時渲染
                         loadRecordsFromSheet();
                         alert(`已成功更新 ${record.studentName} 的資料至 Google Sheets！`);
                     }).catch(err => {
@@ -973,7 +971,6 @@
                 }
             });
 
-            // 核心修改：精準對應調動後的最新 schedule 物件生成 WhatsApp 訊息
             window.sendWhatsapp = function(id) {
                 const record = studentRecords.find(r => String(r.id) === String(id));
                 if (!record || !record.parentPhone) {
@@ -1004,28 +1001,25 @@
 
             adminSearchInput.addEventListener('keyup', renderAdminTable);
 
-            // 核心修改：精準對應 ID 從 Google Sheets 刪除整列
+            // 修正版刪除邏輯：攜帶 action: 'delete' 並且不觸發多餘空白欄位
             window.deleteRecord = function(id) {
                 const record = studentRecords.find(r => String(r.id) === String(id));
-                const name = record ? record.studentName : '';
+                const name = record ? record.studentName : '該學生';
 
                 if (confirm(`確定要刪除 ${name} 的留位記錄嗎？此操作將同時從 Google Sheets 刪除！`)) {
+                    // 前端先移除，提供流暢操作體驗
+                    studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
+                    refreshAdminDashboard();
+
                     if (SCRIPT_URL) {
                         fetch(SCRIPT_URL, {
                             method: 'POST',
-                            body: JSON.stringify({ action: 'delete', id: id })
+                            body: JSON.stringify({ action: 'delete', id: String(id) })
                         }).then(() => {
-                            studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
-                            refreshAdminDashboard();
                             loadRecordsFromSheet();
                         }).catch(err => {
                             console.error("刪除失敗:", err);
-                            studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
-                            refreshAdminDashboard();
                         });
-                    } else {
-                        studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
-                        refreshAdminDashboard();
                     }
                 }
             };
