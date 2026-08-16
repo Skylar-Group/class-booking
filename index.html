@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博學堂新學年功輔留位登記 V1.6-SecureAdmin</title>
+    <title>博學堂新學年功輔留位登記 V1.7-SyncApprovalStatus</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -15,7 +15,7 @@
     <!-- Top Navigation -->
     <nav class="bg-indigo-900 text-white text-xs py-2 px-4 shadow-inner">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V1.6-SecureAdmin</strong></span>
+            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V1.7-SyncApprovalStatus</strong></span>
             <button type="button" id="navAdminBtn" class="bg-indigo-700 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition flex items-center space-x-1 cursor-pointer">
                 <i class="fa-solid fa-user-shield"></i>
                 <span id="navAdminBtnText">管理員登入</span>
@@ -29,7 +29,6 @@
             <!-- 左側：Logo 及標題 -->
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded-xl shadow-inner flex items-center justify-center">
-                    <!-- 引用上傳的 SLC Logo -->
                     <img src="SLC Logo (Blue+橫+中英).jpg" alt="博學堂 Logo" class="h-10 w-auto object-contain">
                 </div>
                 <div>
@@ -873,7 +872,7 @@
 
             window.openEditModal = function(id) {
                 editingRecordId = id;
-                const record = studentRecords.find(r => r.id === id);
+                const record = studentRecords.find(r => Number(r.id) === Number(id));
                 if (!record) return;
 
                 editStudentInfo.textContent = `學生：${record.studentName} (${record.targetGrade}) | 電話：${record.parentPhone || '未提供'}`;
@@ -901,8 +900,9 @@
 
             closeEditModalBtn.addEventListener('click', () => adminEditModal.classList.add('hidden'));
 
+            // 核心修改：確認調動並核准時同步發送 POST 請求寫入 Google Sheets
             saveEditBtn.addEventListener('click', () => {
-                const record = studentRecords.find(r => r.id === editingRecordId);
+                const record = studentRecords.find(r => Number(r.id) === Number(editingRecordId));
                 if (!record) return;
 
                 let updatedSchedule = {};
@@ -918,9 +918,31 @@
                 record.schedule = updatedSchedule;
                 record.status = 'Approved';
 
-                adminEditModal.classList.add('hidden');
-                refreshAdminDashboard();
-                alert(`已成功調動並核准 ${record.studentName} 的課堂時間！`);
+                saveEditBtn.disabled = true;
+                saveEditBtn.textContent = "儲存中...";
+
+                if (SCRIPT_URL) {
+                    fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(record)
+                    }).then(() => {
+                        saveEditBtn.disabled = false;
+                        saveEditBtn.textContent = "確認調動並核准";
+                        adminEditModal.classList.add('hidden');
+                        loadRecordsFromSheet();
+                        alert(`已成功調動並核准 ${record.studentName} 的課堂時間，資料已同步至 Google Sheets！`);
+                    }).catch(err => {
+                        saveEditBtn.disabled = false;
+                        saveEditBtn.textContent = "確認調動並核准";
+                        console.error("同步失敗:", err);
+                        alert("儲存至 Google Sheets 時出錯，請再試一次。");
+                    });
+                } else {
+                    saveEditBtn.disabled = false;
+                    saveEditBtn.textContent = "確認調動並核准";
+                    adminEditModal.classList.add('hidden');
+                    refreshAdminDashboard();
+                }
             });
 
             window.sendWhatsapp = function(id) {
