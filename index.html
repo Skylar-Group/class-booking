@@ -8,13 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 pb-12">
 
@@ -117,7 +111,6 @@
 
                     <!-- Global Rules Setup -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 mb-6 bg-slate-50 rounded-xl border border-slate-200">
-                        <!-- Days Per Week -->
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1" for="daysPerWeek">
                                 1. 每星期上堂日數 <span class="text-xs font-normal text-slate-500">(規定最少2日，最多5日)</span>
@@ -131,7 +124,6 @@
                             </select>
                         </div>
 
-                        <!-- Class Duration -->
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1" for="globalDuration">
                                 2. 每堂課時長度 <span class="text-xs font-normal text-slate-500">(所有課堂統一)</span>
@@ -144,16 +136,13 @@
                         </div>
                     </div>
 
-                    <!-- Day Selection Status Alert -->
                     <div id="selectionStatusAlert" class="mb-4 text-xs px-3.5 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 flex items-center justify-between">
                         <span id="alertMessage"><i class="fa-solid fa-circle-info mr-1.5"></i>請選擇 <strong id="requiredDaysText">3</strong> 天上堂時間</span>
                         <span class="font-bold" id="selectedDaysCountText">已選 3 天</span>
                     </div>
 
-                    <!-- Days Schedule Container -->
-                    <div class="space-y-3" id="daysScheduleContainer">
-                        <!-- Dynamic rendering by JS -->
-                    </div>
+                    <!-- Dynamic Schedule Selector -->
+                    <div class="space-y-3" id="daysScheduleContainer"></div>
                 </div>
 
                 <!-- Card 3: Remarks -->
@@ -168,7 +157,6 @@
                         class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm"></textarea>
                 </div>
 
-                <!-- Submit Button -->
                 <div class="pt-2">
                     <button type="submit"
                         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition transform active:scale-[0.99] flex items-center justify-center text-lg space-x-2 cursor-pointer">
@@ -181,51 +169,37 @@
 
         <!-- ================= ADMIN VIEW ================= -->
         <div id="adminViewSection" class="hidden space-y-6">
-
-            <!-- Stats Overview Dashboard -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-slate-400 uppercase">總登記學生人數</p>
                         <h3 class="text-3xl font-bold text-slate-800 mt-1" id="statTotalStudents">0</h3>
                     </div>
-                    <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl text-xl">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
+                    <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-users"></i></div>
                 </div>
-
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-slate-400 uppercase">平均每週課時</p>
                         <h3 class="text-3xl font-bold text-indigo-600 mt-1" id="statAvgHours">0h</h3>
                     </div>
-                    <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl text-xl">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
+                    <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-clock"></i></div>
                 </div>
-
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-slate-400 uppercase">最受歡迎課時</p>
                         <h3 class="text-2xl font-bold text-emerald-600 mt-1" id="statPopularDuration">-</h3>
                     </div>
-                    <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl text-xl">
-                        <i class="fa-solid fa-hourglass-half"></i>
-                    </div>
+                    <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-hourglass-half"></i></div>
                 </div>
-
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-slate-400 uppercase">熱門上堂日子</p>
                         <h3 class="text-2xl font-bold text-amber-600 mt-1" id="statPopularDay">-</h3>
                     </div>
-                    <div class="bg-amber-50 text-amber-600 p-3.5 rounded-xl text-xl">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
+                    <div class="bg-amber-50 text-amber-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-calendar-check"></i></div>
                 </div>
             </div>
 
-            <!-- Admin View Tabs Nav -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 pb-3">
                 <div class="flex bg-slate-200/80 p-1 rounded-xl space-x-1">
                     <button type="button" id="tabWeeklyCalendarBtn" class="px-4 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-xs flex items-center space-x-1.5 cursor-pointer">
@@ -237,8 +211,6 @@
                         <span>📋 學生數據清單</span>
                     </button>
                 </div>
-
-                <!-- Calendar Controls / Filter -->
                 <div id="calendarFilterBox" class="flex items-center space-x-2 text-xs">
                     <span class="text-slate-500 font-medium">篩選年級:</span>
                     <select id="calendarGradeFilter" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-medium text-slate-700">
@@ -249,14 +221,7 @@
                 </div>
             </div>
 
-            <!-- SECTION 1: WEEKLY CALENDAR MATRIX (週曆視圖) -->
             <div id="weeklyCalendarTabContent" class="space-y-4">
-                <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-3.5 text-xs text-indigo-800 flex flex-wrap items-center justify-between gap-2">
-                    <span class="flex items-center"><i class="fa-solid fa-circle-info mr-1.5"></i>週曆橫軸為**星期一至五**，縱軸為**開始時間**。卡片顏色：<span class="inline-block w-3 h-3 bg-sky-100 border border-sky-300 rounded ml-2 mr-1"></span>小學部 <span class="inline-block w-3 h-3 bg-purple-100 border border-purple-300 rounded ml-2 mr-1"></span>中學部</span>
-                    <span class="font-bold text-indigo-900">提示：點擊學生卡片可檢視完整排課詳情</span>
-                </div>
-
-                <!-- Calendar Grid Container -->
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden overflow-x-auto">
                     <table class="w-full text-left border-collapse min-w-[700px]">
                         <thead>
@@ -269,30 +234,21 @@
                                 <th class="p-3 font-bold text-center w-1/5">星期五</th>
                             </tr>
                         </thead>
-                        <tbody id="weeklyCalendarGridBody" class="divide-y divide-slate-200 text-xs">
-                            <!-- Dynamic rendering by JS -->
-                        </tbody>
+                        <tbody id="weeklyCalendarGridBody" class="divide-y divide-slate-200 text-xs"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- SECTION 2: STUDENT RECORDS TABLE (數據列表) -->
             <div id="tableTabContent" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
                     <div>
                         <h3 class="font-bold text-slate-800 text-lg">學生留位資料列表</h3>
-                        <p class="text-xs text-slate-500">實時管理所有提交記錄及匯出 Excel</p>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <input type="text" id="adminSearchInput" placeholder="搜尋學生姓名..."
-                            class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <button type="button" id="exportCsvBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1 cursor-pointer">
-                            <i class="fa-solid fa-file-excel"></i>
-                            <span>匯出 CSV</span>
-                        </button>
+                        <input type="text" id="adminSearchInput" placeholder="搜尋學生姓名..." class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
+                        <button type="button" id="exportCsvBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">匯出 CSV</button>
                     </div>
                 </div>
-
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
@@ -306,91 +262,49 @@
                                 <th class="p-3.5 text-center">操作</th>
                             </tr>
                         </thead>
-                        <tbody id="adminTableBody" class="divide-y divide-slate-100">
-                            <!-- Injected by JS -->
-                        </tbody>
+                        <tbody id="adminTableBody" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
-
         </div>
-
     </main>
 
-    <!-- Confirmation Modal for Parent -->
+    <!-- Modals -->
     <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 transform transition-all overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="text-center pb-4 border-b border-slate-100">
-                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-800">登記確認預覽</h3>
-                <p class="text-xs text-slate-500 mt-1">請核對以下提交之留位資料</p>
-            </div>
-
-            <div class="py-4 overflow-y-auto space-y-3 text-sm" id="modalContent">
-                <!-- Content injected via JS -->
-            </div>
-
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 flex flex-col max-h-[90vh]">
+            <h3 class="text-xl font-bold text-slate-800 text-center mb-4">登記確認預覽</h3>
+            <div class="py-4 overflow-y-auto space-y-3 text-sm" id="modalContent"></div>
             <div class="pt-4 border-t border-slate-100 flex gap-3">
-                <button type="button" id="closeModalBtn" class="w-1/2 py-2.5 px-4 rounded-xl border border-slate-300 font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
-                    返回修改
-                </button>
-                <button type="button" id="finalSubmitBtn" class="w-1/2 py-2.5 px-4 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 shadow-md transition cursor-pointer">
-                    確認送出
-                </button>
+                <button type="button" id="closeModalBtn" class="w-1/2 py-2.5 rounded-xl border border-slate-300 font-semibold">返回修改</button>
+                <button type="button" id="finalSubmitBtn" class="w-1/2 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold">確認送出</button>
             </div>
         </div>
     </div>
 
-    <!-- Student Detail Modal for Admin -->
     <div id="studentDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 class="text-lg font-bold text-slate-800 flex items-center">
-                    <i class="fa-solid fa-id-card text-indigo-600 mr-2"></i>
-                    學生留位詳情
-                </h3>
-                <button type="button" id="closeStudentDetailBtn" class="text-slate-400 hover:text-slate-600 text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div id="studentDetailContent" class="py-4 space-y-3 text-xs">
-                <!-- Dynamic injection -->
-            </div>
-            <button type="button" id="closeStudentDetailConfirmBtn" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 transition cursor-pointer">
-                關閉
-            </button>
+            <h3 class="text-lg font-bold text-slate-800 mb-4">學生留位詳情</h3>
+            <div id="studentDetailContent" class="py-2 space-y-3 text-xs mb-4"></div>
+            <button type="button" id="closeStudentDetailConfirmBtn" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-xs">關閉</button>
         </div>
     </div>
 
-    <!-- Success Screen Modal -->
     <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center">
-            <div class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
             <h3 class="text-2xl font-bold text-slate-800 mb-2">登記成功！</h3>
-            <p class="text-slate-600 text-sm mb-6">我們已收到您的留位申請，負責導師將會盡快與閣下確認時間及細節。</p>
-            <button type="button" id="resetFormBtn" class="w-full py-3 px-4 rounded-xl bg-slate-800 text-white font-semibold hover:bg-slate-900 transition cursor-pointer">
-                完成 / 填寫下一位學生
-            </button>
+            <p class="text-slate-600 text-sm mb-6">我們已收到您的留位申請。</p>
+            <button type="button" id="resetFormBtn" class="w-full py-3 rounded-xl bg-slate-800 text-white font-semibold">完成</button>
         </div>
     </div>
 
-    <!-- Admin Password Prompt Modal -->
     <div id="adminAuthModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
-            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
-                <i class="fa-solid fa-lock"></i>
-            </div>
             <h3 class="text-lg font-bold text-slate-800 mb-1">管理員身份驗證</h3>
-            <p class="text-xs text-slate-500 mb-4">請輸入管理密碼進入後台（預設密碼：admin123）</p>
-            <input type="password" id="adminPasswordInput" placeholder="請輸入密碼"
-                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none mb-4 text-center font-mono">
+            <p class="text-xs text-slate-500 mb-4">預設密碼：admin123</p>
+            <input type="password" id="adminPasswordInput" placeholder="請輸入密碼" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 mb-4 text-center font-mono">
             <div class="flex gap-2">
-                <button type="button" id="closeAdminAuthBtn" class="w-1/2 py-2 rounded-xl border border-slate-300 text-slate-600 text-sm font-semibold cursor-pointer">取消</button>
-                <button type="button" id="verifyAdminBtn" class="w-1/2 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 cursor-pointer">登入</button>
+                <button type="button" id="closeAdminAuthBtn" class="w-1/2 py-2 rounded-xl border border-slate-300 text-slate-600 text-sm font-semibold">取消</button>
+                <button type="button" id="verifyAdminBtn" class="w-1/2 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold">登入</button>
             </div>
         </div>
     </div>
@@ -398,7 +312,6 @@
     <!-- Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Days Constants
             const days = [
                 { id: 'mon', name: '星期一' },
                 { id: 'tue', name: '星期二' },
@@ -406,69 +319,15 @@
                 { id: 'thu', name: '星期四' },
                 { id: 'fri', name: '星期五' }
             ];
-
             const startTimes = ["16:00", "16:30", "17:00", "17:30", "18:00"];
 
-            // State
             let isAdminLoggedIn = false;
-
-            // Mock Initial Student Records Data
             let studentRecords = [
-                {
-                    id: 1,
-                    studentName: '陳大文',
-                    targetGrade: '升小四',
-                    daysPerWeek: 3,
-                    duration: 1.5,
-                    schedule: { mon: '16:00-17:30', wed: '16:30-18:00', fri: '16:00-17:30' },
-                    remarks: '希望著重加強英文課',
-                    submittedAt: '2026-08-01 14:20'
-                },
-                {
-                    id: 2,
-                    studentName: '李小玲',
-                    targetGrade: '升中一',
-                    daysPerWeek: 4,
-                    duration: 2.0,
-                    schedule: { mon: '17:00-19:00', tue: '17:00-19:00', thu: '17:00-19:00', fri: '17:00-19:00' },
-                    remarks: '無',
-                    submittedAt: '2026-08-02 10:15'
-                },
-                {
-                    id: 3,
-                    studentName: '張子軒',
-                    targetGrade: '升小五',
-                    daysPerWeek: 2,
-                    duration: 1.5,
-                    schedule: { tue: '16:30-18:00', thu: '16:30-18:00' },
-                    remarks: '需要協助準備呈分試',
-                    submittedAt: '2026-08-03 16:45'
-                },
-                {
-                    id: 4,
-                    studentName: '黃家寶',
-                    targetGrade: '升中三',
-                    daysPerWeek: 3,
-                    duration: 2.0,
-                    schedule: { mon: '16:00-18:00', wed: '16:00-18:00', fri: '18:00-20:00' },
-                    remarks: '無',
-                    submittedAt: '2026-08-04 11:30'
-                },
-                {
-                    id: 5,
-                    studentName: '周梓涵',
-                    targetGrade: '升小二',
-                    daysPerWeek: 3,
-                    duration: 1.5,
-                    schedule: { mon: '16:00-17:30', wed: '16:00-17:30', fri: '16:30-18:00' },
-                    remarks: '家長安排專車接送',
-                    submittedAt: '2026-08-04 15:10'
-                }
+                { id: 1, studentName: '陳大文', targetGrade: '升小四', daysPerWeek: 3, duration: 1.5, schedule: { mon: '16:00-17:30', wed: '16:30-18:00', fri: '16:00-17:30' }, remarks: '加強英文', submittedAt: '2026-08-01 14:20' },
+                { id: 2, studentName: '李小玲', targetGrade: '升中一', daysPerWeek: 4, duration: 2.0, schedule: { mon: '17:00-19:00', tue: '17:00-19:00', thu: '17:00-19:00', fri: '17:00-19:00' }, remarks: '無', submittedAt: '2026-08-02 10:15' }
             ];
-
             let tempSubmissionData = null;
 
-            // DOM Elements
             const parentViewSection = document.getElementById('parentViewSection');
             const adminViewSection = document.getElementById('adminViewSection');
             const navAdminBtn = document.getElementById('navAdminBtn');
@@ -484,12 +343,9 @@
             const confirmModal = document.getElementById('confirmModal');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const finalSubmitBtn = document.getElementById('finalSubmitBtn');
-
             const studentDetailModal = document.getElementById('studentDetailModal');
             const studentDetailContent = document.getElementById('studentDetailContent');
-            const closeStudentDetailBtn = document.getElementById('closeStudentDetailBtn');
             const closeStudentDetailConfirmBtn = document.getElementById('closeStudentDetailConfirmBtn');
-
             const successModal = document.getElementById('successModal');
             const resetFormBtn = document.getElementById('resetFormBtn');
 
@@ -508,43 +364,30 @@
             const adminSearchInput = document.getElementById('adminSearchInput');
             const exportCsvBtn = document.getElementById('exportCsvBtn');
 
-            // Render Day Selector Rows for Parents
             function renderDays() {
                 const defaultRequiredDays = parseInt(daysPerWeekSelect.value);
-
                 daysScheduleContainer.innerHTML = days.map((day, index) => {
-                    const isCheckedByDefault = index < defaultRequiredDays;
+                    const isChecked = index < defaultRequiredDays;
                     return `
-                    <div class="p-3.5 rounded-xl border transition-all ${isCheckedByDefault ? 'border-indigo-200 bg-indigo-50/30' : 'border-slate-200 bg-slate-50/50'}" id="card-${day.id}">
+                    <div class="p-3.5 rounded-xl border transition-all ${isChecked ? 'border-indigo-200 bg-indigo-50/30' : 'border-slate-200 bg-slate-50/50'}" id="card-${day.id}">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                             <div class="flex items-center justify-between md:justify-start md:w-36">
                                 <span class="font-bold text-slate-800 text-base">${day.name}</span>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="enable-${day.id}" class="day-checkbox sr-only peer" data-day="${day.id}" ${isCheckedByDefault ? 'checked' : ''}>
-                                    <div class="relative w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                                    <span class="ms-2 text-xs font-medium text-slate-600 md:hidden" id="status-label-mobile-${day.id}">${isCheckedByDefault ? '上堂' : '不上堂'}</span>
-                                </label>
+                                <input type="checkbox" id="enable-${day.id}" class="day-checkbox" data-day="${day.id}" ${isChecked ? 'checked' : ''}>
                             </div>
-
-                            <div id="controls-${day.id}" class="flex-1 ${isCheckedByDefault ? '' : 'opacity-40 pointer-events-none'} transition-all">
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-500 mb-1">開始時間</label>
-                                    <select id="start-${day.id}" class="day-start-time w-full px-3 py-2 text-sm rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                        ${startTimes.map(time => `<option value="${time}">${time} (開始)</option>`).join('')}
-                                    </select>
-                                </div>
+                            <div id="controls-${day.id}" class="flex-1 ${isChecked ? '' : 'opacity-40 pointer-events-none'}">
+                                <select id="start-${day.id}" class="day-start-time w-full px-3 py-2 text-sm rounded-lg border border-slate-300 bg-white">
+                                    ${startTimes.map(t => `<option value="${t}">${t} (開始)</option>`).join('')}
+                                </select>
                             </div>
-
-                            <div class="flex items-center justify-between md:justify-end md:w-44 pt-2 md:pt-0 border-t md:border-t-0 border-slate-200/60">
-                                <span class="text-xs text-slate-500 md:hidden">預計時間：</span>
-                                <span id="badge-${day.id}" class="text-xs font-medium px-2.5 py-1 rounded-md ${isCheckedByDefault ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'bg-slate-200 text-slate-500'}">
-                                    ${isCheckedByDefault ? '16:00 - 17:30' : '未選擇'}
+                            <div class="flex items-center justify-end md:w-44">
+                                <span id="badge-${day.id}" class="text-xs font-medium px-2.5 py-1 rounded-md ${isChecked ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'bg-slate-200 text-slate-500'}">
+                                    ${isChecked ? '16:00 - 17:30' : '未選擇'}
                                 </span>
                             </div>
                         </div>
-                    </div>
-                `}).join('');
-
+                    </div>`;
+                }).join('');
                 bindDayEvents();
             }
 
@@ -552,43 +395,27 @@
                 document.querySelectorAll('.day-checkbox').forEach(chk => {
                     chk.addEventListener('change', function () {
                         const dayId = this.getAttribute('data-day');
-                        applyDayToggleUI(dayId, this.checked);
+                        const controls = document.getElementById(`controls-${dayId}`);
+                        const card = document.getElementById(`card-${dayId}`);
+                        if (this.checked) {
+                            controls.classList.remove('opacity-40', 'pointer-events-none');
+                            card.classList.add('border-indigo-200', 'bg-indigo-50/30');
+                        } else {
+                            controls.classList.add('opacity-40', 'pointer-events-none');
+                            card.classList.remove('border-indigo-200', 'bg-indigo-50/30');
+                        }
                         updateCalculations();
                     });
                 });
-
                 document.querySelectorAll('.day-start-time').forEach(sel => {
                     sel.addEventListener('change', updateCalculations);
                 });
             }
 
-            function applyDayToggleUI(dayId, isChecked) {
-                const controls = document.getElementById(`controls-${dayId}`);
-                const card = document.getElementById(`card-${dayId}`);
-                const mobileLabel = document.getElementById(`status-label-mobile-${dayId}`);
-
-                if (isChecked) {
-                    controls.classList.remove('opacity-40', 'pointer-events-none');
-                    card.classList.remove('border-slate-200', 'bg-slate-50/50');
-                    card.classList.add('border-indigo-200', 'bg-indigo-50/30');
-                    if (mobileLabel) mobileLabel.textContent = '上堂';
-                } else {
-                    controls.classList.add('opacity-40', 'pointer-events-none');
-                    card.classList.add('border-slate-200', 'bg-slate-50/50');
-                    card.classList.remove('border-indigo-200', 'bg-indigo-50/30');
-                    if (mobileLabel) mobileLabel.textContent = '不上堂';
-                }
-            }
-
             function calculateEndTime(startTime, durationHours) {
                 const [hours, minutes] = startTime.split(':').map(Number);
-                const totalStartMinutes = hours * 60 + minutes;
-                const totalEndMinutes = totalStartMinutes + (durationHours * 60);
-
-                const endHours = Math.floor(totalEndMinutes / 60);
-                const endMins = totalEndMinutes % 60;
-
-                return `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
+                const totalEndMinutes = hours * 60 + minutes + (durationHours * 60);
+                return `${String(Math.floor(totalEndMinutes / 60)).padStart(2, '0')}:${String(totalEndMinutes % 60).padStart(2, '0')}`;
             }
 
             function updateCalculations() {
@@ -600,12 +427,10 @@
                 days.forEach(day => {
                     const checkbox = document.getElementById(`enable-${day.id}`);
                     const badge = document.getElementById(`badge-${day.id}`);
-
                     if (checkbox && checkbox.checked) {
                         activeDaysCount++;
                         const startTime = document.getElementById(`start-${day.id}`).value;
                         const endTime = calculateEndTime(startTime, globalDuration);
-
                         badge.textContent = `${startTime} - ${endTime}`;
                         badge.className = "text-xs font-semibold px-2.5 py-1 rounded-md bg-indigo-100 text-indigo-700";
                         totalHours += globalDuration;
@@ -618,40 +443,37 @@
                 document.getElementById('totalHoursDisplay').textContent = totalHours;
                 document.getElementById('requiredDaysText').textContent = requiredDays;
                 document.getElementById('selectedDaysCountText').textContent = `已選 ${activeDaysCount} 天`;
-
-                const alertBox = document.getElementById('selectionStatusAlert');
-                if (activeDaysCount === requiredDays) {
-                    alertBox.className = "mb-4 text-xs px-3.5 py-2 rounded-lg bg-green-50 border border-green-200 text-green-800 flex items-center justify-between";
-                    document.getElementById('alertMessage').innerHTML = `<i class="fa-solid fa-circle-check mr-1.5"></i>已符合選擇要求 (${requiredDays}天)`;
-                } else {
-                    alertBox.className = "mb-4 text-xs px-3.5 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 flex items-center justify-between";
-                    document.getElementById('alertMessage').innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1.5"></i>請選擇 <strong>${requiredDays}</strong> 天上堂時間 (目前已選 ${activeDaysCount} 天)`;
-                }
             }
 
-            function handleDaysPerWeekChange() {
-                const requiredCount = parseInt(daysPerWeekSelect.value);
-
+            daysPerWeekSelect.addEventListener('change', function () {
+                const requiredCount = parseInt(this.value);
                 days.forEach((day, index) => {
                     const checkbox = document.getElementById(`enable-${day.id}`);
                     if (checkbox) {
                         checkbox.checked = index < requiredCount;
-                        applyDayToggleUI(day.id, checkbox.checked);
+                        const controls = document.getElementById(`controls-${day.id}`);
+                        const card = document.getElementById(`card-${day.id}`);
+                        if (checkbox.checked) {
+                            controls.classList.remove('opacity-40', 'pointer-events-none');
+                            card.classList.add('border-indigo-200', 'bg-indigo-50/30');
+                        } else {
+                            controls.classList.add('opacity-40', 'pointer-events-none');
+                            card.classList.remove('border-indigo-200', 'bg-indigo-50/30');
+                        }
                     }
                 });
-
                 updateCalculations();
-            }
+            });
 
-            // Parent Registration Form Logic
+            globalDurationSelect.addEventListener('change', updateCalculations);
+
             registrationForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-
                 const requiredDays = parseInt(daysPerWeekSelect.value);
                 const globalDuration = parseFloat(globalDurationSelect.value);
                 let activeDaysCount = 0;
-                let scheduleSummaryHtml = '';
                 let selectedScheduleObj = {};
+                let summaryHtml = '';
 
                 days.forEach(day => {
                     const checkbox = document.getElementById(`enable-${day.id}`);
@@ -659,20 +481,13 @@
                         activeDaysCount++;
                         const startTime = document.getElementById(`start-${day.id}`).value;
                         const endTime = calculateEndTime(startTime, globalDuration);
-                        const timeRangeStr = `${startTime}-${endTime}`;
-
-                        selectedScheduleObj[day.id] = timeRangeStr;
-                        scheduleSummaryHtml += `
-                            <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200/80">
-                                <span class="font-bold text-slate-700">${day.name}</span>
-                                <span class="text-indigo-600 font-semibold">${startTime} - ${endTime}</span>
-                            </div>
-                        `;
+                        selectedScheduleObj[day.id] = `${startTime}-${endTime}`;
+                        summaryHtml += `<p><strong>${day.name}:</strong> ${startTime} - ${endTime}</p>`;
                     }
                 });
 
                 if (activeDaysCount !== requiredDays) {
-                    alert(`請根據設定選擇正好 ${requiredDays} 天的上堂時間！（目前已選 ${activeDaysCount} 天）`);
+                    alert(`請選擇 ${requiredDays} 天！`);
                     return;
                 }
 
@@ -684,364 +499,111 @@
                     duration: globalDuration,
                     schedule: selectedScheduleObj,
                     remarks: document.getElementById('remarks').value || '無',
-                    submittedAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
+                    submittedAt: new Date().toISOString().slice(0, 16).replace('T', ' ')
                 };
 
-                const modalContent = document.getElementById('modalContent');
-                modalContent.innerHTML = `
-                    <div class="bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-100 space-y-1.5">
-                        <p><strong class="text-slate-600">學生姓名：</strong> ${tempSubmissionData.studentName}</p>
-                        <p><strong class="text-slate-600">升讀年級：</strong> ${tempSubmissionData.targetGrade}</p>
-                        <p><strong class="text-slate-600">每週日數：</strong> 每星期 ${tempSubmissionData.daysPerWeek} 日</p>
-                        <p><strong class="text-slate-600">每堂長度：</strong> ${tempSubmissionData.duration} 小時</p>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-bold text-slate-700">已選上堂時間：</span>
-                            <span class="text-xs text-indigo-600 font-bold">每週共 ${tempSubmissionData.daysPerWeek * tempSubmissionData.duration} 小時</span>
-                        </div>
-                        <div class="space-y-2">
-                            ${scheduleSummaryHtml}
-                        </div>
-                    </div>
-                    ${tempSubmissionData.remarks !== '無' ? `
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                        <strong class="text-slate-600 block mb-1">備註需求：</strong>
-                        <p class="text-slate-600 text-xs">${tempSubmissionData.remarks}</p>
-                    </div>` : ''}
+                document.getElementById('modalContent').innerHTML = `
+                    <p><strong>姓名：</strong> ${tempSubmissionData.studentName}</p>
+                    <p><strong>年級：</strong> ${tempSubmissionData.targetGrade}</p>
+                    ${summaryHtml}
                 `;
-
                 confirmModal.classList.remove('hidden');
             });
 
-            closeModalBtn.addEventListener('click', function () {
-                confirmModal.classList.add('hidden');
-            });
-
-            finalSubmitBtn.addEventListener('click', function () {
-                if (tempSubmissionData) {
-                    studentRecords.push(tempSubmissionData);
-                }
+            closeModalBtn.addEventListener('click', () => confirmModal.classList.add('hidden'));
+            finalSubmitBtn.addEventListener('click', () => {
+                if (tempSubmissionData) studentRecords.push(tempSubmissionData);
                 confirmModal.classList.add('hidden');
                 successModal.classList.remove('hidden');
             });
-
-            resetFormBtn.addEventListener('click', function () {
+            resetFormBtn.addEventListener('click', () => {
                 registrationForm.reset();
                 successModal.classList.add('hidden');
-                handleDaysPerWeekChange();
+                renderDays();
+                updateCalculations();
             });
 
-            // Admin Login Modal & Navigation
+            // Admin Logic
             navAdminBtn.addEventListener('click', function () {
                 if (!isAdminLoggedIn) {
                     adminAuthModal.classList.remove('hidden');
-                    adminPasswordInput.value = '';
-                    adminPasswordInput.focus();
                 } else {
                     isAdminLoggedIn = false;
                     navAdminBtnText.textContent = "管理員登入";
-                    headerTitle.textContent = "新學年補習留位登記";
-                    headerSubtitle.textContent = "請為貴子弟預約來年上堂時間";
-
                     adminViewSection.classList.add('hidden');
                     parentViewSection.classList.remove('hidden');
                 }
             });
 
-            closeAdminAuthBtn.addEventListener('click', function () {
-                adminAuthModal.classList.add('hidden');
-            });
-
+            closeAdminAuthBtn.addEventListener('click', () => adminAuthModal.classList.add('hidden'));
             verifyAdminBtn.addEventListener('click', function () {
                 if (adminPasswordInput.value === 'admin123') {
                     isAdminLoggedIn = true;
                     adminAuthModal.classList.add('hidden');
-
                     navAdminBtnText.textContent = "登出管理員";
-                    headerTitle.textContent = "補習留位系統 - 管理員後台";
-                    headerSubtitle.textContent = "實時數據統計、週曆時間表及留位名單 (V1.4)";
-
                     parentViewSection.classList.add('hidden');
                     adminViewSection.classList.remove('hidden');
-
                     refreshAdminDashboard();
                 } else {
-                    alert('密碼不正確！(預設密碼為 admin123)');
+                    alert('密碼不正確！');
                 }
             });
 
-            adminPasswordInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    verifyAdminBtn.click();
-                }
-            });
-
-            // Admin Tabs Switcher
-            tabWeeklyCalendarBtn.addEventListener('click', function () {
-                tabWeeklyCalendarBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-xs flex items-center space-x-1.5 cursor-pointer";
-                tabTableBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900 flex items-center space-x-1.5 cursor-pointer";
-
+            tabWeeklyCalendarBtn.addEventListener('click', () => {
                 weeklyCalendarTabContent.classList.remove('hidden');
                 tableTabContent.classList.add('hidden');
-                document.getElementById('calendarFilterBox').classList.remove('hidden');
             });
-
-            tabTableBtn.addEventListener('click', function () {
-                tabTableBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-xs flex items-center space-x-1.5 cursor-pointer";
-                tabWeeklyCalendarBtn.className = "px-4 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900 flex items-center space-x-1.5 cursor-pointer";
-
+            tabTableBtn.addEventListener('click', () => {
                 tableTabContent.classList.remove('hidden');
                 weeklyCalendarTabContent.classList.add('hidden');
-                document.getElementById('calendarFilterBox').classList.add('hidden');
             });
 
-            calendarGradeFilter.addEventListener('change', renderWeeklyCalendarMatrix);
-
-            // Admin Dashboard Actions
             function refreshAdminDashboard() {
-                renderAdminStats();
+                document.getElementById('statTotalStudents').textContent = studentRecords.length;
                 renderWeeklyCalendarMatrix();
                 renderAdminTable();
             }
 
-            function renderAdminStats() {
-                const total = studentRecords.length;
-                document.getElementById('statTotalStudents').textContent = total;
-
-                if (total === 0) {
-                    document.getElementById('statAvgHours').textContent = '0h';
-                    document.getElementById('statPopularDuration').textContent = '-';
-                    document.getElementById('statPopularDay').textContent = '-';
-                    return;
-                }
-
-                let totalHoursSum = 0;
-                let duration15Count = 0;
-                let duration20Count = 0;
-                let dayCounts = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0 };
-
-                studentRecords.forEach(rec => {
-                    totalHoursSum += (rec.daysPerWeek * rec.duration);
-                    if (rec.duration === 1.5) duration15Count++;
-                    if (rec.duration === 2.0) duration20Count++;
-
-                    Object.keys(rec.schedule).forEach(dayId => {
-                        if (dayCounts[dayId] !== undefined) dayCounts[dayId]++;
-                    });
-                });
-
-                document.getElementById('statAvgHours').textContent = `${(totalHoursSum / total).toFixed(1)} 小時`;
-                document.getElementById('statPopularDuration').textContent = duration15Count >= duration20Count ? '1.5 小時' : '2.0 小時';
-
-                let maxDayId = 'mon';
-                let maxCount = -1;
-                Object.keys(dayCounts).forEach(d => {
-                    if (dayCounts[d] > maxCount) {
-                        maxCount = dayCounts[d];
-                        maxDayId = d;
-                    }
-                });
-                const dayNameObj = days.find(d => d.id === maxDayId);
-                document.getElementById('statPopularDay').textContent = dayNameObj ? dayNameObj.name : '-';
-            }
-
-            // Render Weekly Calendar Matrix (週曆表格格式)
             function renderWeeklyCalendarMatrix() {
-                const filterGrade = calendarGradeFilter.value;
-
-                // Filter student records by grade
-                const filteredRecords = studentRecords.filter(r => {
-                    if (filterGrade === 'primary') return r.targetGrade.includes('小');
-                    if (filterGrade === 'secondary') return r.targetGrade.includes('中');
-                    return true;
-                });
-
                 let rowsHtml = '';
-
                 startTimes.forEach(time => {
-                    rowsHtml += `<tr class="hover:bg-slate-50/80 transition">`;
-                    // Y-axis time header
-                    rowsHtml += `
-                        <td class="p-3 font-bold text-slate-700 bg-slate-100/70 border-r border-slate-200 text-center align-middle font-mono">
-                            <i class="fa-regular fa-clock text-indigo-500 mr-1"></i>${time}
-                        </td>
-                    `;
-
-                    // X-axis days columns
+                    rowsHtml += `<tr><td class="p-3 font-bold bg-slate-100 text-center">${time}</td>`;
                     days.forEach(day => {
-                        const studentsInCell = filteredRecords.filter(r => {
-                            const daySched = r.schedule[day.id];
-                            return daySched && daySched.startsWith(time + '-');
+                        const cellStudents = studentRecords.filter(r => r.schedule[day.id] && r.schedule[day.id].startsWith(time));
+                        rowsHtml += `<td class="p-2 border">`;
+                        cellStudents.forEach(st => {
+                            rowsHtml += `<div class="p-1 bg-sky-100 rounded text-xs mb-1">${st.studentName} (${st.targetGrade})</div>`;
                         });
-
-                        rowsHtml += `<td class="p-2 border-r border-slate-200 align-top min-h-[90px]">`;
-
-                        if (studentsInCell.length === 0) {
-                            rowsHtml += `<div class="h-full flex items-center justify-center text-slate-300 text-[10px] font-light italic py-2">-</div>`;
-                        } else {
-                            rowsHtml += `<div class="space-y-1.5">`;
-                            studentsInCell.forEach(st => {
-                                const isPrimary = st.targetGrade.includes('小');
-                                const cardStyle = isPrimary 
-                                    ? 'bg-sky-50 hover:bg-sky-100 border-sky-200 text-sky-900' 
-                                    : 'bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-900';
-                                const badgeStyle = isPrimary 
-                                    ? 'bg-sky-200/80 text-sky-800' 
-                                    : 'bg-purple-200/80 text-purple-800';
-
-                                const timeRange = st.schedule[day.id];
-
-                                rowsHtml += `
-                                    <div class="calendar-student-card p-2 rounded-lg border ${cardStyle} transition cursor-pointer shadow-2xs space-y-1" data-id="${st.id}">
-                                        <div class="flex items-center justify-between gap-1">
-                                            <span class="font-bold truncate text-xs">${st.studentName}</span>
-                                            <span class="text-[9px] ${badgeStyle} font-semibold px-1.5 py-0.2 rounded shrink-0">${st.targetGrade}</span>
-                                        </div>
-                                        <div class="flex items-center justify-between text-[10px] font-mono opacity-85">
-                                            <span>${timeRange}</span>
-                                            <span class="font-bold">${st.duration}h</span>
-                                        </div>
-                                    </div>
-                                `;
-                            });
-                            rowsHtml += `</div>`;
-                        }
-
                         rowsHtml += `</td>`;
                     });
-
                     rowsHtml += `</tr>`;
                 });
-
                 weeklyCalendarGridBody.innerHTML = rowsHtml;
-
-                // Bind Card Click to open student detail modal
-                document.querySelectorAll('.calendar-student-card').forEach(card => {
-                    card.addEventListener('click', function () {
-                        const recId = parseInt(this.getAttribute('data-id'));
-                        openStudentDetail(recId);
-                    });
-                });
             }
 
-            function openStudentDetail(id) {
-                const st = studentRecords.find(r => r.id === id);
-                if (!st) return;
-
-                const scheduleBadges = days
-                    .filter(d => st.schedule[d.id])
-                    .map(d => `<div class="flex justify-between bg-slate-50 p-2 rounded border border-slate-200"><span class="font-bold text-slate-700">${d.name}</span><span class="text-indigo-600 font-mono font-semibold">${st.schedule[d.id]}</span></div>`)
-                    .join('');
-
-                studentDetailContent.innerHTML = `
-                    <div class="bg-indigo-50/60 p-3 rounded-xl border border-indigo-100 space-y-1">
-                        <p class="text-sm"><strong class="text-slate-700">學生姓名：</strong> <span class="font-bold text-indigo-900">${st.studentName}</span></p>
-                        <p><strong class="text-slate-600">升讀年級：</strong> ${st.targetGrade}</p>
-                        <p><strong class="text-slate-600">上堂模式：</strong> 每週 ${st.daysPerWeek} 日，每堂 ${st.duration} 小時 (共 ${st.daysPerWeek * st.duration} 小時)</p>
-                    </div>
-                    <div>
-                        <strong class="text-slate-700 block mb-1.5">每週上堂時間明細：</strong>
-                        <div class="space-y-1.5">
-                            ${scheduleBadges}
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                        <strong class="text-slate-600 block mb-1">備註 / 特別需求：</strong>
-                        <p class="text-slate-600 text-[11px]">${st.remarks}</p>
-                    </div>
-                    <p class="text-[10px] text-slate-400 text-right">提交時間：${st.submittedAt}</p>
-                `;
-
-                studentDetailModal.classList.remove('hidden');
-            }
-
-            closeStudentDetailBtn.addEventListener('click', () => studentDetailModal.classList.add('hidden'));
-            closeStudentDetailConfirmBtn.addEventListener('click', () => studentDetailModal.classList.add('hidden'));
-
-            // Render Student Table List
             function renderAdminTable() {
                 const tbody = document.getElementById('adminTableBody');
-                const keyword = adminSearchInput.value.trim().toLowerCase();
-
-                const filtered = studentRecords.filter(r => r.studentName.toLowerCase().includes(keyword));
-
-                if (filtered.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">暫無記錄 / 未找到符合條件之數據</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = filtered.map(r => {
-                    const scheduleBadges = days
-                        .filter(d => r.schedule[d.id])
-                        .map(d => `<span class="inline-block bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-medium mr-1 mb-1 border border-slate-200">${d.name}: ${r.schedule[d.id]}</span>`)
-                        .join('');
-
-                    return `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-3.5 font-bold text-slate-800">${r.studentName}</td>
-                            <td class="p-3.5"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md font-medium text-[11px] border border-indigo-100">${r.targetGrade}</span></td>
-                            <td class="p-3.5 font-semibold text-slate-700">每週 ${r.daysPerWeek} 日</td>
-                            <td class="p-3.5 text-slate-600">${r.duration} 小時</td>
-                            <td class="p-3.5 max-w-xs">${scheduleBadges}</td>
-                            <td class="p-3.5 text-slate-500 text-[11px] max-w-xs truncate">${r.remarks}</td>
-                            <td class="p-3.5 text-center">
-                                <button type="button" class="delete-rec-btn text-red-500 hover:text-red-700 p-1 rounded transition cursor-pointer" data-id="${r.id}" title="刪除">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-
-                // Bind Delete Event
-                document.querySelectorAll('.delete-rec-btn').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const recId = parseInt(this.getAttribute('data-id'));
-                        if (confirm('確定要刪除這筆留位記錄嗎？')) {
-                            studentRecords = studentRecords.filter(r => r.id !== recId);
-                            refreshAdminDashboard();
-                        }
-                    });
-                });
+                tbody.innerHTML = studentRecords.map(r => `
+                    <tr>
+                        <td class="p-3 font-bold">${r.studentName}</td>
+                        <td class="p-3">${r.targetGrade}</td>
+                        <td class="p-3">每週 ${r.daysPerWeek} 日</td>
+                        <td class="p-3">${r.duration} 小時</td>
+                        <td class="p-3">${Object.values(r.schedule).join(', ')}</td>
+                        <td class="p-3">${r.remarks}</td>
+                        <td class="p-3 text-center"><button onclick="deleteRecord(${r.id})" class="text-red-500">刪除</button></td>
+                    </tr>
+                `).join('');
             }
 
-            adminSearchInput.addEventListener('keyup', renderAdminTable);
+            window.deleteRecord = function(id) {
+                studentRecords = studentRecords.filter(r => r.id !== id);
+                refreshAdminDashboard();
+            };
 
-            exportCsvBtn.addEventListener('click', function () {
-                if (studentRecords.length === 0) {
-                    alert('目前沒有記錄可匯出！');
-                    return;
-                }
-
-                let csvContent = "\uFEFF";
-                csvContent += "學生姓名,升讀年級,每週日數,每堂課時(小時),星期一,星期二,星期三,星期四,星期五,備註,提交時間\n";
-
-                studentRecords.forEach(r => {
-                    const mon = r.schedule.mon || '';
-                    const tue = r.schedule.tue || '';
-                    const wed = r.schedule.wed || '';
-                    const thu = r.schedule.thu || '';
-                    const fri = r.schedule.fri || '';
-                    const cleanRemarks = r.remarks.replace(/"/g, '""');
-
-                    csvContent += `"${r.studentName}","${r.targetGrade}","${r.daysPerWeek}","${r.duration}","${mon}","${tue}","${wed}","${thu}","${fri}","${cleanRemarks}","${r.submittedAt}"\n`;
-                });
-
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement("a");
-                const url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", `補習留位紀錄_V1.4_${new Date().toISOString().slice(0,10)}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-
-            // Global Select Listeners
-            daysPerWeekSelect.addEventListener('change', handleDaysPerWeekChange);
-            globalDurationSelect.addEventListener('change', updateCalculations);
-
-            // Init
             renderDays();
             updateCalculations();
+        });
+    </script>
+</body>
+</html>
