@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博學堂新學年功輔留位登記 V1.6-MultiSortAndFilter</title>
+    <title>博學堂新學年功輔留位登記 V1.6-SecureAdmin</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -15,7 +15,7 @@
     <!-- Top Navigation -->
     <nav class="bg-indigo-900 text-white text-xs py-2 px-4 shadow-inner">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V1.6-MultiSortAndFilter</strong></span>
+            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V1.6-SecureAdmin</strong></span>
             <button type="button" id="navAdminBtn" class="bg-indigo-700 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition flex items-center space-x-1 cursor-pointer">
                 <i class="fa-solid fa-user-shield"></i>
                 <span id="navAdminBtnText">管理員登入</span>
@@ -259,7 +259,6 @@
                         <h3 class="font-bold text-slate-800 text-lg">學生留位審批管理列表</h3>
                     </div>
                     <div class="flex flex-wrap items-center gap-2 text-xs">
-                        <!-- 多選時段下拉選單 (Filter) -->
                         <div class="relative inline-block text-left">
                             <button type="button" id="timeFilterDropdownBtn" class="bg-white px-3 py-1.5 rounded-lg border border-slate-300 font-medium text-slate-700 hover:bg-slate-50 flex items-center space-x-1">
                                 <i class="fa-solid fa-filter text-indigo-600"></i>
@@ -343,7 +342,7 @@
     <div id="adminAuthModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
             <h3 class="text-lg font-bold text-slate-800 mb-1">管理員身份驗證</h3>
-            <p class="text-xs text-slate-500 mb-4">預設密碼：admin123</p>
+            <p class="text-xs text-slate-500 mb-4">請輸入管理員登入密碼</p>
             <input type="password" id="adminPasswordInput" placeholder="請輸入密碼" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 mb-4 text-center font-mono">
             <div class="flex gap-2">
                 <button type="button" id="closeAdminAuthBtn" class="w-1/2 py-2 rounded-xl border border-slate-300 text-slate-600 text-sm font-semibold">取消</button>
@@ -371,9 +370,8 @@
             let tempSubmissionData = null;
             let editingRecordId = null;
 
-            // 排序與篩選全域變數
             let currentSortField = null;
-            let currentSortOrder = 'asc'; // 'asc' or 'desc'
+            let currentSortOrder = 'asc';
             let selectedTimeFilters = [];
 
             const parentViewSection = document.getElementById('parentViewSection');
@@ -428,7 +426,6 @@
                     .catch(err => console.error("無法讀取 Google Sheets 資料:", err));
             }
 
-            // 動態產生多選時段選單
             function buildTimeFilterMenu() {
                 let html = '';
                 days.forEach(day => {
@@ -652,6 +649,7 @@
             // Admin Logic
             navAdminBtn.addEventListener('click', function () {
                 if (!isAdminLoggedIn) {
+                    adminPasswordInput.value = '';
                     adminAuthModal.classList.remove('hidden');
                 } else {
                     isAdminLoggedIn = false;
@@ -752,7 +750,6 @@
                 weeklyCalendarGridBody.innerHTML = rowsHtml;
             }
 
-            // 排序切換控制
             window.toggleSort = function(field) {
                 if (currentSortField === field) {
                     currentSortOrder = (currentSortOrder === 'asc') ? 'desc' : 'asc';
@@ -783,7 +780,6 @@
                     if (filterGrade === 'primary') matchesGrade = r.targetGrade.includes('小');
                     if (filterGrade === 'secondary') matchesGrade = r.targetGrade.includes('中');
 
-                    // 多選時段過濾
                     let matchesTime = true;
                     if (selectedTimeFilters.length > 0) {
                         matchesTime = selectedTimeFilters.some(filter => {
@@ -795,13 +791,11 @@
                     return matchesKeyword && matchesGrade && matchesTime;
                 });
 
-                // 執行動態排序
                 if (currentSortField) {
                     filtered.sort((a, b) => {
                         let valA = a[currentSortField] || '';
                         let valB = b[currentSortField] || '';
 
-                        // 上堂時間排序 (按最早出現之星期+時間點)
                         if (currentSortField === 'schedule') {
                             const getEarliestScore = (sched) => {
                                 if (!sched) return 999999;
@@ -915,7 +909,6 @@
                 alert(`已成功調動並核准 ${record.studentName} 的課堂時間！`);
             });
 
-            // 修正版 WhatsApp 發送邏輯
             window.sendWhatsapp = function(id) {
                 const record = studentRecords.find(r => Number(r.id) === Number(id));
                 if (!record || !record.parentPhone) {
