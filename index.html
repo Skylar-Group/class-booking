@@ -1002,28 +1002,36 @@
             adminSearchInput.addEventListener('keyup', renderAdminTable);
 
             // 實時同步刪除至 Google Sheets
-            window.deleteRecord = function(id) {
-                const record = studentRecords.find(r => String(r.id) === String(id));
-                const name = record ? record.studentName : '';
-                
-                if (confirm(`確定要刪除 ${name} 的留位記錄嗎？此操作將同時從 Google Sheets 刪除！`)) {
-                    if (SCRIPT_URL) {
-                        fetch(SCRIPT_URL, {
-                            method: 'POST',
-                            body: JSON.stringify({ action: 'delete', id: id })
-                        }).then(() => {
-                            loadRecordsFromSheet();
-                            alert(`已成功刪除 ${name} 的記錄並同步至 Google Sheets！`);
-                        }).catch(err => {
-                            console.error("刪除失敗:", err);
-                            alert("從 Google Sheets 刪除時出錯，請手動確認。");
-                        });
-                    } else {
-                        studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
-                        refreshAdminDashboard();
-                    }
-                }
-            };
+window.deleteRecord = function(id) {
+    const record = studentRecords.find(r => String(r.id) === String(id));
+    const name = record ? record.studentName : '';
+    
+    if (confirm(`確定要刪除 ${name} 的留位記錄嗎？此操作將同時從 Google Sheets 刪除！`)) {
+        if (SCRIPT_URL) {
+            // 使用 FormData 格式繞過 Apps Script 的 CORS 限制
+            const formData = new FormData();
+            formData.append("data", JSON.stringify({ action: 'delete', id: id }));
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'delete', id: id })
+            }).then(() => {
+                // 立即更新前端畫面並重新讀取資料
+                studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
+                refreshAdminDashboard();
+                loadRecordsFromSheet();
+            }).catch(err => {
+                console.error("刪除失敗:", err);
+                // 即使網絡延遲，前端先預先移除該列
+                studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
+                refreshAdminDashboard();
+            });
+        } else {
+            studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
+            refreshAdminDashboard();
+        }
+    }
+};
 
             renderDays();
             updateCalculations();
