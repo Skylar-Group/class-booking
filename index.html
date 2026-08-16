@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博學堂新學年功輔留位登記 V2.1-FixDelete</title>
+    <title>博學堂新學年功輔留位登記 V2.2-FixDeleteAndUpdate</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -15,7 +15,7 @@
     <!-- Top Navigation -->
     <nav class="bg-indigo-900 text-white text-xs py-2 px-4 shadow-inner">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V2.1-FixDelete</strong></span>
+            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V2.2-FixDeleteAndUpdate</strong></span>
             <button type="button" id="navAdminBtn" class="bg-indigo-700 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition flex items-center space-x-1 cursor-pointer">
                 <i class="fa-solid fa-user-shield"></i>
                 <span id="navAdminBtnText">管理員登入</span>
@@ -1001,13 +1001,12 @@
 
             adminSearchInput.addEventListener('keyup', renderAdminTable);
 
-            // 修正版刪除邏輯：攜帶 action: 'delete' 並且不觸發多餘空白欄位
+            // 修正版刪除：帶入 action: 'delete'，並阻止多餘空紀錄寫入
             window.deleteRecord = function(id) {
                 const record = studentRecords.find(r => String(r.id) === String(id));
                 const name = record ? record.studentName : '該學生';
 
                 if (confirm(`確定要刪除 ${name} 的留位記錄嗎？此操作將同時從 Google Sheets 刪除！`)) {
-                    // 前端先移除，提供流暢操作體驗
                     studentRecords = studentRecords.filter(r => String(r.id) !== String(id));
                     refreshAdminDashboard();
 
