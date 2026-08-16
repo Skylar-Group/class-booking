@@ -268,90 +268,82 @@
                 </div>
 
                 <!-- CSS 列印控制：單頁 Fit 排版 -->
-               <style>
-@media print {
-  @page { 
-    size: A4 portrait; 
-    margin: 8mm; 
-  }
-  body { 
-    background: white !important; 
-    padding: 0 !important; 
-    color: black !important; 
-    font-size: 11px !important;
-  }
-  nav, header, .no-print, #parentViewSection, .flex.bg-slate-200\/80, #calendarFilterBox, button { 
-    display: none !important; 
-  }
-  #adminViewSection, #weeklyCalendarTabContent { 
-    display: block !important; 
-  }
+                <style>
+                @media print {
+                  @page { 
+                    size: A4 portrait; 
+                    margin: 8mm; 
+                  }
+                  body { 
+                    background: white !important; 
+                    padding: 0 !important; 
+                    color: black !important; 
+                    font-size: 11px !important;
+                  }
+                  nav, header, .no-print, #parentViewSection, .flex.bg-slate-200\/80, #calendarFilterBox, button { 
+                    display: none !important; 
+                  }
+                  #adminViewSection, #weeklyCalendarTabContent { 
+                    display: block !important; 
+                  }
 
-  /* 關鍵修正：固定表格總寬與佈局算法 */
-  table { 
-    width: 100% !important; 
-    border-collapse: collapse !important; 
-    table-layout: fixed !important; /* 強制依指定寬度渲染 */
-    page-break-inside: avoid !important;
-  }
+                  table { 
+                    width: 100% !important; 
+                    border-collapse: collapse !important; 
+                    table-layout: fixed !important; 
+                    page-break-inside: avoid !important;
+                  }
 
-  /* 第一欄：時間欄 (固定窄寬) */
-  table th:first-child,
-  table td:first-child { 
-    width: 65px !important; 
-    text-align: center !important;
-    font-weight: bold !important;
-    white-space: nowrap !important;
-  }
+                  table th:first-child,
+                  table td:first-child { 
+                    width: 65px !important; 
+                    text-align: center !important;
+                    font-weight: bold !important;
+                    white-space: nowrap !important;
+                  }
 
-  /* 星期欄：自動拉寬佔滿剩餘空間 */
-  table th:not(:first-child),
-  table td:not(:first-child) { 
-    width: auto !important; 
-    padding: 4px 6px !important;
-  }
+                  table th:not(:first-child),
+                  table td:not(:first-child) { 
+                    width: auto !important; 
+                    padding: 4px 6px !important;
+                  }
 
-  th, td { 
-    border: 1px solid #475569 !important; 
-    font-size: 10px !important; 
-    vertical-align: top !important;
-  }
+                  th, td { 
+                    border: 1px solid #475569 !important; 
+                    font-size: 10px !important; 
+                    vertical-align: top !important;
+                  }
 
-  /* 單日列印隱藏非選擇星期的欄位機制 */
-  body.print-mon table th:nth-child(n+3), body.print-mon table td:nth-child(n+3) { display: none !important; }
-
-  body.print-tue table th:not(:nth-child(1)):not(:nth-child(3)),
-  body.print-tue table td:not(:nth-child(1)):not(:nth-child(3)) { display: none !important; }
-
-  body.print-wed table th:not(:nth-child(1)):not(:nth-child(4)),
-  body.print-wed table td:not(:nth-child(1)):not(:nth-child(4)) { display: none !important; }
-
-  body.print-thu table th:not(:nth-child(1)):not(:nth-child(5)),
-  body.print-thu table td:not(:nth-child(1)):not(:nth-child(5)) { display: none !important; }
-
-  body.print-fri table th:not(:nth-child(1)):not(:nth-child(6)),
-  body.print-fri table td:not(:nth-child(1)):not(:nth-child(6)) { display: none !important; }
-}
-</style>
+                  body.print-mon table th:nth-child(n+3), body.print-mon table td:nth-child(n+3) { display: none !important; }
+                  body.print-tue table th:not(:nth-child(1)):not(:nth-child(3)), body.print-tue table td:not(:nth-child(1)):not(:nth-child(3)) { display: none !important; }
+                  body.print-wed table th:not(:nth-child(1)):not(:nth-child(4)), body.print-wed table td:not(:nth-child(1)):not(:nth-child(4)) { display: none !important; }
+                  body.print-thu table th:not(:nth-child(1)):not(:nth-child(5)), body.print-thu table td:not(:nth-child(1)):not(:nth-child(5)) { display: none !important; }
+                  body.print-fri table th:not(:nth-child(1)):not(:nth-child(6)), body.print-fri table td:not(:nth-child(1)):not(:nth-child(6)) { display: none !important; }
+                }
+                </style>
 
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden overflow-x-auto">
                     <table class="w-full border-collapse">
-  <!-- 加入 colgroup 統一約束欄寬 -->
-  <colgroup>
-    <col style="width: 70px;"> <!-- 時間欄固定 70px -->
-    <col style="width: 19.6%;"> <!-- 星期一 -->
-    <col style="width: 19.6%;"> <!-- 星期二 -->
-    <col style="width: 19.6%;"> <!-- 星期三 -->
-    <col style="width: 19.6%;"> <!-- 星期四 -->
-    <col style="width: 19.6%;"> <!-- 星期五 -->
-  </colgroup>
-  <thead>
-    <!-- 原本的 th 標頭 -->
-  </thead>
-  <tbody>
-    <!-- 原本的內容 -->
-  </tbody>
-</table>
+                        <colgroup>
+                            <col style="width: 70px;">
+                            <col style="width: 19.6%;">
+                            <col style="width: 19.6%;">
+                            <col style="width: 19.6%;">
+                            <col style="width: 19.6%;">
+                            <col style="width: 19.6%;">
+                        </colgroup>
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200 text-xs">
+                                <th class="p-2 border-r border-slate-200 text-center">時間</th>
+                                <th class="p-2 border-r border-slate-200 text-center">星期一</th>
+                                <th class="p-2 border-r border-slate-200 text-center">星期二</th>
+                                <th class="p-2 border-r border-slate-200 text-center">星期三</th>
+                                <th class="p-2 border-r border-slate-200 text-center">星期四</th>
+                                <th class="p-2 text-center">星期五</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weeklyCalendarGridBody" class="divide-y divide-slate-200 text-xs"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -865,10 +857,10 @@
 
                                 if (slotStart === stMin) {
                                     statusEmoji = '🎒';
-                                    sortPriority = 1; // 剛到優先排第一
+                                    sortPriority = 1;
                                 } else if (slotEnd === etMin) {
                                     statusEmoji = '👋';
-                                    sortPriority = 3; // 完堂最後排
+                                    sortPriority = 3;
                                 }
 
                                 cellStudents.push({
@@ -880,7 +872,6 @@
                             }
                         });
 
-                        // 依據 priority (1 -> 2 -> 3) 嚴格排序
                         cellStudents.sort((a, b) => a.sortPriority - b.sortPriority);
 
                         const totalCount = cellStudents.length;
@@ -892,7 +883,6 @@
                         if (totalCount === 0) {
                             rowsHtml += `<div class="text-center text-slate-300 text-[10px] py-0.5">-</div>`;
                         } else {
-                            // 頂部顯示當刻在座人數總和與 Emoji 明細拆解
                             rowsHtml += `
                                 <div class="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded px-1 py-0.5 mb-1 text-center flex items-center justify-between">
                                     <span>👥 在座: ${totalCount}人</span>
@@ -1160,28 +1150,15 @@
                 }
             };
 
-            // 列印指定日期時間表觸發邏輯
             const printDayBtn = document.getElementById('printDayBtn');
             const printDaySelect = document.getElementById('printDaySelect');
 
             if (printDayBtn) {
                 printDayBtn.addEventListener('click', function () {
                     const selectedDay = printDaySelect.value;
-                    const dayNames = { mon: '星期一', tue: '星期二', wed: '星期三', thu: '星期四', fri: '星期五' };
                     
                     document.body.classList.remove('print-mon', 'print-tue', 'print-wed', 'print-thu', 'print-fri');
                     document.body.classList.add(`print-${selectedDay}`);
-
-                    let oldPrintTitle = document.getElementById('dynamicPrintTitle');
-                    if (oldPrintTitle) oldPrintTitle.remove();
-
-                    const printTitle = document.createElement('div');
-                    printTitle.id = 'dynamicPrintTitle';
-                    printTitle.className = 'print-title';
-                    printTitle.innerHTML = `博學堂功輔班每日課堂時間表 - ${dayNames[selectedDay]}`;
-                    
-                    const calendarContainer = document.getElementById('weeklyCalendarTabContent');
-                    calendarContainer.insertBefore(printTitle, calendarContainer.firstChild);
 
                     window.print();
                 });
