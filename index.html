@@ -268,20 +268,71 @@
                 </div>
 
                 <!-- CSS 列印控制：單頁 Fit 排版 -->
-                <style>
-                    @media print {
-                        @page { size: A4 portrait; margin: 6mm; }
-                        body { background: white !important; padding: 0 !important; color: black !important; }
-                        nav, header, .no-print, #parentViewSection, .flex.bg-slate-200\/80, #calendarFilterBox, button { display: none !important; }
-                        #adminViewSection { display: block !important; }
-                        #weeklyCalendarTabContent { display: block !important; }
-                        .shadow-sm, .rounded-2xl { box-shadow: none !important; border-radius: 0 !important; }
-                        table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed; }
-                        th, td { border: 1px solid #94a3b8 !important; padding: 2px 4px !important; font-size: 10px !important; }
-                        .print-title { display: block !important; text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 6px; }
-                    }
-                    .print-title { display: none; }
-                </style>
+               <style>
+@media print {
+  @page { 
+    size: A4 portrait; 
+    margin: 8mm; 
+  }
+  body { 
+    background: white !important; 
+    padding: 0 !important; 
+    color: black !important; 
+    font-size: 11px !important;
+  }
+  nav, header, .no-print, #parentViewSection, .flex.bg-slate-200\/80, #calendarFilterBox, button { 
+    display: none !important; 
+  }
+  #adminViewSection, #weeklyCalendarTabContent { 
+    display: block !important; 
+  }
+  .shadow-sm, .rounded-2xl { 
+    box-shadow: none !important; 
+    border-radius: 0 !important; 
+  }
+  
+  /* 表格直向一頁 Fit 佈局 */
+  table { 
+    width: 100% !important; 
+    border-collapse: collapse !important; 
+    table-layout: fixed !important;
+    page-break-inside: avoid !important;
+  }
+  th, td { 
+    border: 1px solid #64748b !important; 
+    padding: 3px 5px !important; 
+    font-size: 10px !important; 
+    vertical-align: top !important;
+  }
+  th {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+  }
+
+  /* 單日列印隱藏機制 */
+  body.print-mon table th:nth-child(n+3):not(:nth-child(2)),
+  body.print-mon table td:nth-child(n+3):not(:nth-child(2)) { display: none !important; }
+
+  body.print-tue table th:not(:nth-child(1)):not(:nth-child(3)),
+  body.print-tue table td:not(:nth-child(1)):not(:nth-child(3)) { display: none !important; }
+
+  body.print-thu table th:not(:nth-child(1)):not(:nth-child(5)),
+  body.print-thu table td:not(:nth-child(1)):not(:nth-child(5)) { display: none !important; }
+
+  body.print-fri table th:not(:nth-child(1)):not(:nth-child(6)),
+  body.print-fri table td:not(:nth-child(1)):not(:nth-child(6)) { display: none !important; }
+
+  /* 說明欄位列印優化 */
+  .legend-print-box {
+    display: flex !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 6px 10px !important;
+    margin-bottom: 8px !important;
+    background: #f8fafc !important;
+    font-size: 11px !important;
+  }
+}
+</style>
 
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden overflow-x-auto">
                     <table class="w-full text-left border-collapse min-w-[700px]">
@@ -1093,29 +1144,35 @@
                 }
             };
 
-            // 列印指定日期時間表觸發邏輯
-            const printDayBtn = document.getElementById('printDayBtn');
-            const printDaySelect = document.getElementById('printDaySelect');
+            // 1. 列印指定當天時間表處理
+document.getElementById('printDayBtn').addEventListener('click', () => {
+  const selectedDay = document.getElementById('printDaySelect').value; // 'mon', 'tue', 'wed', 'thu', 'fri'
+  
+  // 清除舊有的列印 class
+  document.body.classList.remove('print-mon', 'print-tue', 'print-wed', 'print-thu', 'print-fri');
+  
+  // 加入當前選擇星期的 class
+  document.body.classList.add(`print-${selectedDay}`);
+  
+  // 觸發瀏覽器列印
+  window.print();
+});
 
-            if (printDayBtn) {
-                printDayBtn.addEventListener('click', function () {
-                    const selectedDay = printDaySelect.value;
-                    const dayNames = { mon: '星期一', tue: '星期二', wed: '星期三', thu: '星期四', fri: '星期五' };
-                    
-                    let oldPrintTitle = document.getElementById('dynamicPrintTitle');
-                    if (oldPrintTitle) oldPrintTitle.remove();
+// 2. 於 Emoji 說明欄計算並顯示當刻人數 (可在 renderWeeklyCalendar 中呼叫)
+function updateSlotHeaderCount(dayKey, timeSlot, studentsInSlot) {
+  // 計算各種 Emoji 狀態的人數
+  const startingCount = studentsInSlot.filter(s => s.statusEmoji === '🎒').length;
+  const ongoingCount = studentsInSlot.filter(s => s.statusEmoji === '📖').length;
+  const endingCount = studentsInSlot.filter(s => s.statusEmoji === '👋').length;
+  const totalCount = studentsInSlot.length;
 
-                    const printTitle = document.createElement('div');
-                    printTitle.id = 'dynamicPrintTitle';
-                    printTitle.className = 'print-title';
-                    printTitle.innerHTML = `博學堂功輔班每日課堂時間表 - ${dayNames[selectedDay]}`;
-                    
-                    const calendarContainer = document.getElementById('weeklyCalendarTabContent');
-                    calendarContainer.insertBefore(printTitle, calendarContainer.firstChild);
-
-                    window.print();
-                });
-            }
+  return `
+    <div class="text-[11px] font-normal text-slate-600 mt-1 space-x-1">
+      <span class="font-bold text-indigo-700">總人數: ${totalCount}人</span> 
+      (<span>🎒${startingCount}</span> | <span>📖${ongoingCount}</span> | <span>👋${endingCount}</span>)
+    </div>
+  `;
+}
 
             renderDays();
             updateCalculations();
