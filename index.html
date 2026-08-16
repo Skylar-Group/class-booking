@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博學堂新學年功輔留位登記 V1.4-WeeklyCalendarView</title>
+    <title>博學堂新學年功輔留位登記 V1.5-ApprovalSystem</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -15,7 +15,7 @@
     <!-- Top Navigation -->
     <nav class="bg-indigo-900 text-white text-xs py-2 px-4 shadow-inner">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V1.4-WeeklyCalendarView</strong></span>
+            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V1.5-ApprovalSystem</strong></span>
             <button type="button" id="navAdminBtn" class="bg-indigo-700 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition flex items-center space-x-1 cursor-pointer">
                 <i class="fa-solid fa-user-shield"></i>
                 <span id="navAdminBtnText">管理員登入</span>
@@ -50,14 +50,14 @@
                         <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg mr-3">
                             <i class="fa-solid fa-user-graduate"></i>
                         </div>
-                        <h2 class="text-lg font-bold text-slate-800">第一部分：學生資料</h2>
+                        <h2 class="text-lg font-bold text-slate-800">第一部分：學生及家長資料</h2>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                         <!-- Student Name -->
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1" for="studentName">
-                                學生中文姓名 <span class="text-red-500">* (必須輸入中文)</span>
+                                學生中文姓名 <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="studentName" required placeholder="例：陳大文" pattern="^[\u4e00-\u9fa5]+$" title="請只輸入中文姓名"
                                 class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
@@ -89,6 +89,15 @@
                                 </optgroup>
                             </select>
                         </div>
+
+                        <!-- Parent Phone (NEW) -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1" for="parentPhone">
+                                家長 WhatsApp 電話 <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" id="parentPhone" required placeholder="例：91234567" pattern="^[2356789]\d{7}$" title="請輸入8位香港電話號碼"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
+                        </div>
                     </div>
                 </div>
 
@@ -109,7 +118,6 @@
                         </div>
                     </div>
 
-                    <!-- Global Rules Setup -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 mb-6 bg-slate-50 rounded-xl border border-slate-200">
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1" for="daysPerWeek">
@@ -140,7 +148,6 @@
                         <span class="font-bold" id="selectedDaysCountText">已選 3 天</span>
                     </div>
 
-                    <!-- Dynamic Schedule Selector -->
                     <div class="space-y-3" id="daysScheduleContainer"></div>
                 </div>
 
@@ -178,24 +185,24 @@
                 </div>
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
+                        <p class="text-xs font-semibold text-amber-500 uppercase">待審批留位</p>
+                        <h3 class="text-3xl font-bold text-amber-600 mt-1" id="statPendingStudents">0</h3>
+                    </div>
+                    <div class="bg-amber-50 text-amber-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-hourglass-half"></i></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-emerald-500 uppercase">已確認留位</p>
+                        <h3 class="text-3xl font-bold text-emerald-600 mt-1" id="statApprovedStudents">0</h3>
+                    </div>
+                    <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-circle-check"></i></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
                         <p class="text-xs font-semibold text-slate-400 uppercase">平均每週課時</p>
                         <h3 class="text-3xl font-bold text-indigo-600 mt-1" id="statAvgHours">0h</h3>
                     </div>
                     <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-clock"></i></div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase">最受歡迎課時</p>
-                        <h3 class="text-2xl font-bold text-emerald-600 mt-1" id="statPopularDuration">-</h3>
-                    </div>
-                    <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-hourglass-half"></i></div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase">熱門上堂日子</p>
-                        <h3 class="text-2xl font-bold text-amber-600 mt-1" id="statPopularDay">-</h3>
-                    </div>
-                    <div class="bg-amber-50 text-amber-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-calendar-check"></i></div>
                 </div>
             </div>
 
@@ -241,10 +248,10 @@
             <div id="tableTabContent" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
                     <div>
-                        <h3 class="font-bold text-slate-800 text-lg">學生留位資料列表</h3>
+                        <h3 class="font-bold text-slate-800 text-lg">學生留位審批管理列表</h3>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <input type="text" id="adminSearchInput" placeholder="搜尋學生姓名..." class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
+                        <input type="text" id="adminSearchInput" placeholder="搜尋學生或電話..." class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
                         <button type="button" id="exportCsvBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">匯出 CSV</button>
                     </div>
                 </div>
@@ -253,12 +260,12 @@
                         <thead>
                             <tr class="bg-slate-100/70 text-slate-600 border-b border-slate-200 uppercase font-semibold">
                                 <th class="p-3.5">學生姓名</th>
-                                <th class="p-3.5">升讀年級</th>
-                                <th class="p-3.5">每週日數</th>
-                                <th class="p-3.5">每堂課時</th>
+                                <th class="p-3.5">年級</th>
+                                <th class="p-3.5">家長電話</th>
+                                <th class="p-3.5">狀態</th>
                                 <th class="p-3.5">上堂時間明細</th>
                                 <th class="p-3.5">備註</th>
-                                <th class="p-3.5 text-center">操作</th>
+                                <th class="p-3.5 text-center">審批與通知</th>
                             </tr>
                         </thead>
                         <tbody id="adminTableBody" class="divide-y divide-slate-100"></tbody>
@@ -280,18 +287,25 @@
         </div>
     </div>
 
-    <div id="studentDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <!-- Admin Edit Modal (NEW) -->
+    <div id="adminEditModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-            <h3 class="text-lg font-bold text-slate-800 mb-4">學生留位詳情</h3>
-            <div id="studentDetailContent" class="py-2 space-y-3 text-xs mb-4"></div>
-            <button type="button" id="closeStudentDetailConfirmBtn" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-xs">關閉</button>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">管理員調動課堂時間</h3>
+            <p class="text-xs text-slate-500 mb-4" id="editStudentInfo"></p>
+            
+            <div id="editScheduleContainer" class="space-y-3 text-xs mb-4 max-h-[50vh] overflow-y-auto"></div>
+
+            <div class="flex gap-2">
+                <button type="button" id="closeEditModalBtn" class="w-1/2 py-2 rounded-xl border border-slate-300 text-slate-600 text-xs font-semibold">取消</button>
+                <button type="button" id="saveEditBtn" class="w-1/2 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold">確認調動並核准</button>
+            </div>
         </div>
     </div>
 
     <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center">
             <h3 class="text-2xl font-bold text-slate-800 mb-2">登記成功！</h3>
-            <p class="text-slate-600 text-sm mb-6">我們已收到您的留位申請。</p>
+            <p class="text-slate-600 text-sm mb-6">我們已收到您的留位申請，負責導師將盡快審批並透過 WhatsApp 與閣下確認。</p>
             <button type="button" id="resetFormBtn" class="w-full py-3 rounded-xl bg-slate-800 text-white font-semibold">完成</button>
         </div>
     </div>
@@ -308,7 +322,6 @@
         </div>
     </div>
 
-    <!-- Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjtvZ7SWCAf8_GrF4Mg6SiyS06PxzSLg2QhouOHFWP5EkzDsctz1xef8HGC4hHXbnP_g/exec";
@@ -325,6 +338,7 @@
             let isAdminLoggedIn = false;
             let studentRecords = [];
             let tempSubmissionData = null;
+            let editingRecordId = null;
 
             const parentViewSection = document.getElementById('parentViewSection');
             const adminViewSection = document.getElementById('adminViewSection');
@@ -348,6 +362,12 @@
             const closeAdminAuthBtn = document.getElementById('closeAdminAuthBtn');
             const verifyAdminBtn = document.getElementById('verifyAdminBtn');
 
+            const adminEditModal = document.getElementById('adminEditModal');
+            const editStudentInfo = document.getElementById('editStudentInfo');
+            const editScheduleContainer = document.getElementById('editScheduleContainer');
+            const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+            const saveEditBtn = document.getElementById('saveEditBtn');
+
             const tabWeeklyCalendarBtn = document.getElementById('tabWeeklyCalendarBtn');
             const tabTableBtn = document.getElementById('tabTableBtn');
             const weeklyCalendarTabContent = document.getElementById('weeklyCalendarTabContent');
@@ -356,14 +376,13 @@
             const weeklyCalendarGridBody = document.getElementById('weeklyCalendarGridBody');
 
             const adminSearchInput = document.getElementById('adminSearchInput');
-            const exportCsvBtn = document.getElementById('exportCsvBtn');
 
             function loadRecordsFromSheet() {
                 if (!SCRIPT_URL) return;
                 fetch(SCRIPT_URL)
                     .then(res => res.json())
                     .then(data => {
-                        studentRecords = data;
+                        studentRecords = data.map(r => ({ ...r, status: r.status || 'Pending' }));
                         refreshAdminDashboard();
                     })
                     .catch(err => console.error("無法讀取 Google Sheets 資料:", err));
@@ -476,6 +495,8 @@
                 e.preventDefault();
 
                 const nameInput = document.getElementById('studentName').value.trim();
+                const phoneInput = document.getElementById('parentPhone').value.trim();
+
                 const chineseRegex = /^[\u4e00-\u9fa5]+$/;
                 if (!chineseRegex.test(nameInput)) {
                     alert('學生姓名必須全部輸入中文！');
@@ -508,17 +529,20 @@
                     id: Date.now(),
                     studentName: nameInput,
                     targetGrade: document.getElementById('targetGrade').value,
+                    parentPhone: phoneInput,
                     daysPerWeek: requiredDays,
                     duration: globalDuration,
                     schedule: selectedScheduleObj,
                     remarks: document.getElementById('remarks').value || '無',
+                    status: 'Pending',
                     submittedAt: new Date().toISOString().slice(0, 16).replace('T', ' ')
                 };
 
                 document.getElementById('modalContent').innerHTML = `
-                    <p><strong>姓名：</strong> ${tempSubmissionData.studentName}</p>
-                    <p><strong>年級：</strong> ${tempSubmissionData.targetGrade}</p>
-                    ${summaryHtml}
+                    <p><strong>學生姓名：</strong> ${tempSubmissionData.studentName}</p>
+                    <p><strong>升讀年級：</strong> ${tempSubmissionData.targetGrade}</p>
+                    <p><strong>家長電話：</strong> ${tempSubmissionData.parentPhone}</p>
+                    <div class="mt-2 pt-2 border-t">${summaryHtml}</div>
                 `;
                 confirmModal.classList.remove('hidden');
             });
@@ -548,6 +572,7 @@
                 updateCalculations();
             });
 
+            // Admin Logic
             navAdminBtn.addEventListener('click', function () {
                 if (!isAdminLoggedIn) {
                     adminAuthModal.classList.remove('hidden');
@@ -592,7 +617,13 @@
             calendarGradeFilter.addEventListener('change', refreshAdminDashboard);
 
             function refreshAdminDashboard() {
+                const pendingCount = studentRecords.filter(r => r.status === 'Pending').length;
+                const approvedCount = studentRecords.filter(r => r.status === 'Approved').length;
+
                 document.getElementById('statTotalStudents').textContent = studentRecords.length;
+                document.getElementById('statPendingStudents').textContent = pendingCount;
+                document.getElementById('statApprovedStudents').textContent = approvedCount;
+
                 renderWeeklyCalendarMatrix();
                 renderAdminTable();
             }
@@ -616,9 +647,9 @@
                             rowsHtml += `<div class="text-center text-slate-300 text-xs py-1">-</div>`;
                         } else {
                             cellStudents.forEach(st => {
-                                const isPrimary = st.targetGrade.includes('小');
-                                const bgStyle = isPrimary ? 'bg-sky-100 border-sky-300 text-sky-900' : 'bg-purple-100 border-purple-300 text-purple-900';
-                                rowsHtml += `<div class="p-1.5 border rounded text-xs mb-1 ${bgStyle}"><strong>${st.studentName}</strong> (${st.targetGrade})</div>`;
+                                const isApproved = st.status === 'Approved';
+                                const bgStyle = isApproved ? 'bg-emerald-100 border-emerald-300 text-emerald-900' : 'bg-amber-100 border-amber-300 text-amber-900';
+                                rowsHtml += `<div class="p-1.5 border rounded text-xs mb-1 ${bgStyle}"><strong>${st.studentName}</strong> (${st.targetGrade}) [${isApproved ? '已確認' : '待審批'}]</div>`;
                             });
                         }
                         rowsHtml += `</td>`;
@@ -634,11 +665,11 @@
                 const filterGrade = calendarGradeFilter.value;
 
                 const filtered = studentRecords.filter(r => {
-                    const matchesName = r.studentName.toLowerCase().includes(keyword);
+                    const matchesKeyword = r.studentName.toLowerCase().includes(keyword) || (r.parentPhone && r.parentPhone.includes(keyword));
                     let matchesGrade = true;
                     if (filterGrade === 'primary') matchesGrade = r.targetGrade.includes('小');
                     if (filterGrade === 'secondary') matchesGrade = r.targetGrade.includes('中');
-                    return matchesName && matchesGrade;
+                    return matchesKeyword && matchesGrade;
                 });
 
                 if (filtered.length === 0) {
@@ -649,21 +680,28 @@
                 tbody.innerHTML = filtered.map(r => {
                     const dayNameMap = { mon: '星期一', tue: '星期二', wed: '星期三', thu: '星期四', fri: '星期五' };
                     const scheduleBadges = Object.entries(r.schedule)
-                        .map(([dayId, timeRange]) => {
-                            const startTimeOnly = timeRange.split('-')[0];
-                            return `<span class="inline-block bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-xs font-semibold mr-1 mb-1 border border-indigo-200">${dayNameMap[dayId]} ${startTimeOnly}</span>`;
-                        })
+                        .map(([dayId, timeRange]) => `<span class="inline-block bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-xs font-semibold mr-1 mb-1 border border-indigo-200">${dayNameMap[dayId]} ${timeRange.split('-')[0]}</span>`)
                         .join('');
+
+                    const statusBadge = r.status === 'Approved' 
+                        ? `<span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-bold">已確認</span>`
+                        : `<span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-xs font-bold">待審批</span>`;
 
                     return `
                         <tr class="hover:bg-slate-50 transition">
                             <td class="p-3.5 font-bold text-slate-800">${r.studentName}</td>
-                            <td class="p-3.5"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md font-medium text-xs border border-indigo-100">${r.targetGrade}</span></td>
-                            <td class="p-3.5 font-semibold text-slate-700">每週 ${r.daysPerWeek} 日</td>
-                            <td class="p-3.5 text-slate-600">${r.duration} 小時</td>
+                            <td class="p-3.5">${r.targetGrade}</td>
+                            <td class="p-3.5 font-mono">${r.parentPhone || '-'}</td>
+                            <td class="p-3.5">${statusBadge}</td>
                             <td class="p-3.5 max-w-xs">${scheduleBadges}</td>
                             <td class="p-3.5 text-slate-500 text-xs">${r.remarks}</td>
-                            <td class="p-3.5 text-center">
+                            <td class="p-3.5 text-center space-x-1">
+                                <button type="button" onclick="openEditModal(${r.id})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded text-xs font-semibold cursor-pointer">
+                                    調動 / 審批
+                                </button>
+                                <button type="button" onclick="sendWhatsapp(${r.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-xs font-semibold cursor-pointer">
+                                    <i class="fa-brands fa-whatsapp"></i> 通知
+                                </button>
                                 <button type="button" onclick="deleteRecord(${r.id})" class="text-red-500 hover:text-red-700 p-1 cursor-pointer">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
@@ -672,6 +710,82 @@
                     `;
                 }).join('');
             }
+
+            // 開啟調動審批 Modal
+            window.openEditModal = function(id) {
+                editingRecordId = id;
+                const record = studentRecords.find(r => r.id === id);
+                if (!record) return;
+
+                editStudentInfo.textContent = `學生：${record.studentName} (${record.targetGrade}) | 電話：${record.parentPhone || '未提供'}`;
+
+                editScheduleContainer.innerHTML = days.map(day => {
+                    const currentRange = record.schedule[day.id] || '';
+                    const isChecked = !!currentRange;
+                    const startTime = currentRange ? currentRange.split('-')[0] : '16:00';
+
+                    return `
+                        <div class="flex items-center justify-between p-2 bg-slate-50 rounded border">
+                            <label class="flex items-center font-bold">
+                                <input type="checkbox" id="edit-check-${day.id}" ${isChecked ? 'checked' : ''} class="mr-2">
+                                ${day.name}
+                            </label>
+                            <select id="edit-start-${day.id}" class="px-2 py-1 border rounded bg-white">
+                                ${startTimes.map(t => `<option value="${t}" ${t === startTime ? 'selected' : ''}>${t}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                }).join('');
+
+                adminEditModal.classList.remove('hidden');
+            };
+
+            closeEditModalBtn.addEventListener('click', () => adminEditModal.classList.add('hidden'));
+
+            // 儲存審批調動
+            saveEditBtn.addEventListener('click', () => {
+                const record = studentRecords.find(r => r.id === editingRecordId);
+                if (!record) return;
+
+                let updatedSchedule = {};
+                days.forEach(day => {
+                    const chk = document.getElementById(`edit-check-${day.id}`);
+                    if (chk && chk.checked) {
+                        const start = document.getElementById(`edit-start-${day.id}`).value;
+                        const end = calculateEndTime(start, record.duration || 1.5);
+                        updatedSchedule[day.id] = `${start}-${end}`;
+                    }
+                });
+
+                record.schedule = updatedSchedule;
+                record.status = 'Approved';
+
+                adminEditModal.classList.add('hidden');
+                refreshAdminDashboard();
+                alert(`已成功調動並核准 ${record.studentName} 的課堂時間！`);
+            });
+
+            // 發送 WhatsApp 通知
+            window.sendWhatsapp = function(id) {
+                const record = studentRecords.find(r => r.id === id);
+                if (!record || !record.parentPhone) {
+                    alert('未提供家長電話號碼，無法發送 WhatsApp！');
+                    return;
+                }
+
+                const dayNameMap = { mon: '星期一', tue: '星期二', wed: '星期三', thu: '星期四', fri: '星期五' };
+                const scheduleText = Object.entries(record.schedule)
+                    .map(([dayId, range]) => `${dayNameMap[dayId]} ${range}`)
+                    .join('\n• ');
+
+                const message = `【博學堂新學年功輔留位確認通知】\n\n尊貴的家長您好，\n貴子弟 *${record.studentName}* (${record.targetGrade}) 的新學年功輔留位時間已完成審批與確認：\n\n• ${scheduleText}\n\n請回覆此訊息確認以上時間。如有任何疑問，歡迎聯絡我們！`;
+
+                const encodedMsg = encodeURIComponent(message);
+                const phone = record.parentPhone.replace(/\D/g, '');
+                const fullPhone = phone.startsWith('852') ? phone : `852${phone}`;
+
+                window.open(`https://wa.me/${fullPhone}?text=${encodedMsg}`, '_blank');
+            };
 
             adminSearchInput.addEventListener('keyup', renderAdminTable);
 
