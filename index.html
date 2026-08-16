@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博學堂新學年功輔留位登記 V2.3-FixDeleteComplete</title>
+    <title>博學堂新學年功輔留位登記 V2.4-FixParentSubmit</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -15,7 +15,7 @@
     <!-- Top Navigation -->
     <nav class="bg-indigo-900 text-white text-xs py-2 px-4 shadow-inner">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V2.3-FixDeleteComplete</strong></span>
+            <span class="font-mono text-indigo-300">系統版本: <strong class="text-white">V2.4-FixParentSubmit</strong></span>
             <button type="button" id="navAdminBtn" class="bg-indigo-700 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition flex items-center space-x-1 cursor-pointer">
                 <i class="fa-solid fa-user-shield"></i>
                 <span id="navAdminBtnText">管理員登入</span>
@@ -653,6 +653,7 @@
 
             closeModalBtn.addEventListener('click', () => confirmModal.classList.add('hidden'));
 
+            // 修正家長提交邏輯：改用 payload 表單格式相容後端
             finalSubmitBtn.addEventListener('click', () => {
                 if (tempSubmissionData) {
                     if (SCRIPT_URL) {
@@ -930,7 +931,6 @@
 
             closeEditModalBtn.addEventListener('click', () => adminEditModal.classList.add('hidden'));
 
-            // 100% 同步覆蓋修改 logic
             saveEditBtn.addEventListener('click', () => {
                 const record = studentRecords.find(r => String(r.id) === String(editingRecordId));
                 if (!record) return;
@@ -1008,7 +1008,6 @@
 
             adminSearchInput.addEventListener('keyup', renderAdminTable);
 
-            // 100% 防跨域卡死刪除 logic
             window.deleteRecord = function(id) {
                 const record = studentRecords.find(r => String(r.id) === String(id));
                 const name = record ? record.studentName : '該學生';
