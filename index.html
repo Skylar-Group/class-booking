@@ -268,53 +268,90 @@
                 </div>
 
                 <!-- CSS 列印控制：單頁 Fit 排版 -->
-                <style>
-                    @media print {
-                        @page { size: A4 portrait; margin: 6mm; }
-                        body { background: white !important; padding: 0 !important; color: black !important; font-size: 10px !important; }
-                        nav, header, .no-print, #parentViewSection, .flex.bg-slate-200\/80, #calendarFilterBox, button { display: none !important; }
-                        #adminViewSection, #weeklyCalendarTabContent { display: block !important; }
-                        .shadow-sm, .rounded-2xl { box-shadow: none !important; border-radius: 0 !important; }
-                        table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; page-break-inside: avoid !important; }
-                        th, td { border: 1px solid #64748b !important; padding: 2px 3px !important; font-size: 9.5px !important; vertical-align: top !important; }
-                        th { background-color: #f1f5f9 !important; color: #0f172a !important; }
+               <style>
+@media print {
+  @page { 
+    size: A4 portrait; 
+    margin: 8mm; 
+  }
+  body { 
+    background: white !important; 
+    padding: 0 !important; 
+    color: black !important; 
+    font-size: 11px !important;
+  }
+  nav, header, .no-print, #parentViewSection, .flex.bg-slate-200\/80, #calendarFilterBox, button { 
+    display: none !important; 
+  }
+  #adminViewSection, #weeklyCalendarTabContent { 
+    display: block !important; 
+  }
 
-                        /* 單日列印隱藏機制 */
-                        body.print-mon table th:nth-child(n+3):not(:nth-child(2)),
-                        body.print-mon table td:nth-child(n+3):not(:nth-child(2)) { display: none !important; }
+  /* 關鍵修正：固定表格總寬與佈局算法 */
+  table { 
+    width: 100% !important; 
+    border-collapse: collapse !important; 
+    table-layout: fixed !important; /* 強制依指定寬度渲染 */
+    page-break-inside: avoid !important;
+  }
 
-                        body.print-tue table th:not(:nth-child(1)):not(:nth-child(3)),
-                        body.print-tue table td:not(:nth-child(1)):not(:nth-child(3)) { display: none !important; }
+  /* 第一欄：時間欄 (固定窄寬) */
+  table th:first-child,
+  table td:first-child { 
+    width: 65px !important; 
+    text-align: center !important;
+    font-weight: bold !important;
+    white-space: nowrap !important;
+  }
 
-                        body.print-wed table th:not(:nth-child(1)):not(:nth-child(4)),
-                        body.print-wed table td:not(:nth-child(1)):not(:nth-child(4)) { display: none !important; }
+  /* 星期欄：自動拉寬佔滿剩餘空間 */
+  table th:not(:first-child),
+  table td:not(:first-child) { 
+    width: auto !important; 
+    padding: 4px 6px !important;
+  }
 
-                        body.print-thu table th:not(:nth-child(1)):not(:nth-child(5)),
-                        body.print-thu table td:not(:nth-child(1)):not(:nth-child(5)) { display: none !important; }
+  th, td { 
+    border: 1px solid #475569 !important; 
+    font-size: 10px !important; 
+    vertical-align: top !important;
+  }
 
-                        body.print-fri table th:not(:nth-child(1)):not(:nth-child(6)),
-                        body.print-fri table td:not(:nth-child(1)):not(:nth-child(6)) { display: none !important; }
+  /* 單日列印隱藏非選擇星期的欄位機制 */
+  body.print-mon table th:nth-child(n+3), body.print-mon table td:nth-child(n+3) { display: none !important; }
 
-                        .legend-print-box { display: flex !important; border: 1px solid #cbd5e1 !important; padding: 4px 8px !important; margin-bottom: 6px !important; background: #f8fafc !important; font-size: 10px !important; }
-                        .print-title { display: block !important; text-align: center; font-size: 15px; font-weight: bold; margin-bottom: 6px; }
-                    }
-                    .print-title { display: none; }
-                </style>
+  body.print-tue table th:not(:nth-child(1)):not(:nth-child(3)),
+  body.print-tue table td:not(:nth-child(1)):not(:nth-child(3)) { display: none !important; }
+
+  body.print-wed table th:not(:nth-child(1)):not(:nth-child(4)),
+  body.print-wed table td:not(:nth-child(1)):not(:nth-child(4)) { display: none !important; }
+
+  body.print-thu table th:not(:nth-child(1)):not(:nth-child(5)),
+  body.print-thu table td:not(:nth-child(1)):not(:nth-child(5)) { display: none !important; }
+
+  body.print-fri table th:not(:nth-child(1)):not(:nth-child(6)),
+  body.print-fri table td:not(:nth-child(1)):not(:nth-child(6)) { display: none !important; }
+}
+</style>
 
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[700px]">
-                        <thead>
-                            <tr class="bg-indigo-600 text-white text-xs uppercase">
-                                <th class="p-2.5 w-20 text-center font-bold border-r border-indigo-500">時段 / 星期</th>
-                                <th class="p-2.5 font-bold text-center border-r border-indigo-500 w-1/5">星期一</th>
-                                <th class="p-2.5 font-bold text-center border-r border-indigo-500 w-1/5">星期二</th>
-                                <th class="p-2.5 font-bold text-center border-r border-indigo-500 w-1/5">星期三</th>
-                                <th class="p-2.5 font-bold text-center border-r border-indigo-500 w-1/5">星期四</th>
-                                <th class="p-2.5 font-bold text-center w-1/5">星期五</th>
-                            </tr>
-                        </thead>
-                        <tbody id="weeklyCalendarGridBody" class="divide-y divide-slate-200 text-xs"></tbody>
-                    </table>
+                    <table class="w-full border-collapse">
+  <!-- 加入 colgroup 統一約束欄寬 -->
+  <colgroup>
+    <col style="width: 70px;"> <!-- 時間欄固定 70px -->
+    <col style="width: 19.6%;"> <!-- 星期一 -->
+    <col style="width: 19.6%;"> <!-- 星期二 -->
+    <col style="width: 19.6%;"> <!-- 星期三 -->
+    <col style="width: 19.6%;"> <!-- 星期四 -->
+    <col style="width: 19.6%;"> <!-- 星期五 -->
+  </colgroup>
+  <thead>
+    <!-- 原本的 th 標頭 -->
+  </thead>
+  <tbody>
+    <!-- 原本的內容 -->
+  </tbody>
+</table>
                 </div>
             </div>
 
